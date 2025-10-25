@@ -3,9 +3,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const AGREEMENTS_KEY = '@agreements';
 const PARTIES_KEY = '@parties';
 
+// object agreement
 export interface Agreement {
   id: string;
-  user_email: string; // 👈 links to the user
+  user_email: string; 
   title: string;
   terms: string;
   status: string;
@@ -13,6 +14,7 @@ export interface Agreement {
   updated_at: string;
 }
 
+// object party
 export interface Party {
   id: string;
   agreement_id: string;
@@ -25,10 +27,12 @@ export interface Party {
   created_at: string;
 }
 
+// object na inherited ung agreement
 export interface AgreementWithParties extends Agreement {
   parties: Party[];
 }
 
+// id generator
 const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
 export const agreementStorage = {

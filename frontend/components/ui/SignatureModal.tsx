@@ -27,7 +27,6 @@ export default function SignatureModal({
   const [tempSignature, setTempSignature] = useState<string | null>(null); // store temp signature
 
   const handleOK = (signature: string) => {
-    // Instead of saving immediately, store it temporarily
     setTempSignature(signature);
   };
 
