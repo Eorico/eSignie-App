@@ -22,7 +22,6 @@ export const Agreementstyles = StyleSheet.create({
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
   },
   iconContainer: {
     width: 40,

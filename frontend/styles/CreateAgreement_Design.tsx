@@ -6,18 +6,8 @@ export const CreateAgreementstyles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   content: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  errorContainer: {
-    backgroundColor: '#fee2e2',
-    padding: 12,
-    borderRadius: 6,
-    marginBottom: 16,
-  },
-  errorText: {
-    color: '#dc2626',
-    fontSize: 14,
+    padding: 15,
+    paddingBottom: 0,
   },
   input: {
     borderWidth: 1,
@@ -45,8 +35,14 @@ export const CreateAgreementstyles = StyleSheet.create({
     backgroundColor: '#292a2bff',
     marginVertical: 24,
   },
+  partySectionWrapper: {
+    height: 280,
+  },
   partySection: {
-    marginBottom: 20,
+    marginBottom: 0,
+    flexGrow: 0,
+    maxHeight: 350,
+    overflow: 'hidden',
   },
   partyHeader: {
     flexDirection: 'row',

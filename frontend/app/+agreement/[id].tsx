@@ -1,14 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   ScrollView,
   TouchableOpacity,
   Alert,
   Image,
 } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack, useNavigation } from 'expo-router';
 import { Trash2, Edit, FileText, Share } from 'lucide-react-native';
 import { agreementStorage, partyStorage, type AgreementWithParties } from '@/lib/LocalStorage';
 import SignatureModal from '@/components/ui/SignatureModal';
@@ -23,6 +22,28 @@ export default function AgreementDetail() {
   const [error, setError] = useState<string | null>(null);
   const [signatureModalVisible, setSignatureModalVisible] = useState(false);
   const [selectedPartyId, setSelectedPartyId] = useState<string | null>(null);
+
+  const nav = useNavigation();
+
+  useLayoutEffect(()=> {
+    nav.setOptions({
+       title: "Agreement Details",
+      headerShown: true,
+      headerRight: () => (
+        <TouchableOpacity onPress={handleDelete} style={CreatedAgreementstyles.headerButton}>
+          <Trash2 size={20} color="#ef4444" />
+        </TouchableOpacity>
+      ),
+      headerStyle: {
+        backgroundColor: "#37353E",
+      },
+      headerTitleStyle: {
+        color: "#EAEAEA",
+        fontWeight: "600",
+        fontSize: 20,
+      },
+    });
+  }, [nav])
 
   useEffect(() => {
     fetchAgreementDetails();
@@ -163,25 +184,6 @@ export default function AgreementDetail() {
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: 'Agreement Details',
-          headerShown: true,
-          headerRight: () => (
-            <TouchableOpacity onPress={handleDelete} style={CreatedAgreementstyles.headerButton}>
-              <Trash2 size={20} color="#ef4444" />
-            </TouchableOpacity>
-          ),
-          headerStyle: {
-            backgroundColor: '#37353E',
-          },
-          headerTitleStyle: {
-            color: '#EAEAEA',
-            fontWeight: '600',
-            fontSize: 20,
-          },
-        }}
-      />
       <ScrollView style={CreatedAgreementstyles.container}>
         <View style={CreatedAgreementstyles.content}>
           <View style={CreatedAgreementstyles.header}>
@@ -209,9 +211,21 @@ export default function AgreementDetail() {
             </Text>
           </View>
 
-          <TouchableOpacity style={CreatedAgreementstyles.exportButton} onPress={handleExportPDF}>
-            <Share size={16} color="#ffffff" />
-            <Text style={CreatedAgreementstyles.exportButtonText}>Export PDF</Text>
+          <TouchableOpacity 
+            style={[CreatedAgreementstyles.exportButton, {borderRadius:25}]} 
+            onPress={handleExportPDF}
+            >
+
+            <Share 
+              size={16} 
+              color="#ffffff" 
+              />
+
+            <Text 
+              style={CreatedAgreementstyles.exportButtonText}>
+                Export PDF
+            </Text>
+            
           </TouchableOpacity>
 
           <View style={CreatedAgreementstyles.section}>

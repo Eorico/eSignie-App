@@ -2,7 +2,6 @@ import { useState, useCallback } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
   FlatList,
   TouchableOpacity,
   RefreshControl,
@@ -11,6 +10,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { FileText, ChevronRight } from 'lucide-react-native';
 import { agreementStorage, type AgreementWithParties } from '@/lib/LocalStorage';
 import { Agreementstyles } from '@/styles/Agreement_Design';
+import { useAuth } from '../+auth/context/authContext';
 
 export default function Agreements() {
   const router = useRouter();
@@ -18,15 +18,24 @@ export default function Agreements() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  const {user} = useAuth();
 
   const fetchAgreements = async () => {
+    if (!user) return;
+    
     try {
       setError(null);
 
-      const agreementsData = await agreementStorage.getAll();
+      const agreementData = await agreementStorage.getAll();
 
+      const userAgreementsData = agreementData.filter(
+      (agreement) => agreement.user_email === user.email
+      );
+
+      // Fetch full agreements with parties
       const agreementsWithParties: AgreementWithParties[] = await Promise.all(
-        agreementsData.map(async (agreement) => {
+        userAgreementsData.map(async (agreement) => {
           const fullAgreement = await agreementStorage.getById(agreement.id);
           return fullAgreement!;
         })
@@ -37,8 +46,8 @@ export default function Agreements() {
       );
 
       setAgreements(agreementsWithParties);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load agreements');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to load agreements');
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -87,7 +96,7 @@ export default function Agreements() {
     >
       <View style={Agreementstyles.cardHeader}>
         <View style={Agreementstyles.iconContainer}>
-          <FileText size={24} color="#2563eb" />
+          <FileText size={24} color="#B6771D" />
         </View>
         <View style={Agreementstyles.cardContent}>
           <Text style={Agreementstyles.cardTitle} numberOfLines={1}>

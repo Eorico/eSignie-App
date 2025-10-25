@@ -42,7 +42,7 @@ export const SignatureModalstyles = StyleSheet.create({
   clearButton: {
     flex: 1,
     padding: 16,
-    borderRadius: 8,
+    borderRadius: 25,
     backgroundColor: '#f3f4f6',
     alignItems: 'center',
   },
@@ -54,12 +54,12 @@ export const SignatureModalstyles = StyleSheet.create({
   saveButton: {
     flex: 2,
     padding: 16,
-    borderRadius: 8,
-    backgroundColor: '#2563eb',
+    borderRadius: 25,
+    backgroundColor: '#46eb25ff',
     alignItems: 'center',
   },
   saveButtonDisabled: {
-    backgroundColor: '#93c5fd',
+    backgroundColor: '#46eb25bf',
   },
   saveButtonText: {
     color: '#ffffff',
