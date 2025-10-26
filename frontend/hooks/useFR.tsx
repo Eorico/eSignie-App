@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 
+// window shower
 declare global {
     interface Window {
         frameworkReady?: () => void;

@@ -4,7 +4,6 @@ import {
   Text,
   Modal,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 import SignatureCanvas from 'react-native-signature-canvas';
 import { X } from 'lucide-react-native';
@@ -25,20 +24,21 @@ export default function SignatureModal({
 }: SignatureModalProps) {
   const signatureRef = useRef<any>(null);
   const [hasSignature, setHasSignature] = useState(false);
+  const [tempSignature, setTempSignature] = useState<string | null>(null); // store temp signature
 
   const handleOK = (signature: string) => {
-    onSave(signature);
-    setHasSignature(false);
-    onClose();
+    setTempSignature(signature);
   };
 
   const handleClear = () => {
     signatureRef.current?.clearSignature();
     setHasSignature(false);
+    setTempSignature(null);
   };
 
   const handleEmpty = () => {
     setHasSignature(false);
+    setTempSignature(null);
   };
 
   const handleBegin = () => {
@@ -47,6 +47,15 @@ export default function SignatureModal({
 
   const handleEnd = () => {
     signatureRef.current?.readSignature();
+  };
+
+  const handleSave = () => {
+    if (tempSignature) {
+      onSave(tempSignature); // save only when user clicks Save
+      setTempSignature(null);
+      setHasSignature(false);
+      onClose();
+    }
   };
 
   const handleCloseModal = () => {
@@ -76,7 +85,7 @@ export default function SignatureModal({
         <View style={SignatureModalstyles.canvasContainer}>
           <SignatureCanvas
             ref={signatureRef}
-            onOK={handleOK}
+            onOK={handleOK}           // store signature instead of saving
             onEmpty={handleEmpty}
             onBegin={handleBegin}
             onEnd={handleEnd}
@@ -97,8 +106,11 @@ export default function SignatureModal({
             <Text style={SignatureModalstyles.clearButtonText}>Clear</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[SignatureModalstyles.saveButton, !hasSignature && SignatureModalstyles.saveButtonDisabled]}
-            onPress={handleEnd}
+            style={[
+              SignatureModalstyles.saveButton,
+              !hasSignature && SignatureModalstyles.saveButtonDisabled,
+            ]}
+            onPress={handleSave}       // save only when user clicks
             disabled={!hasSignature}
           >
             <Text style={SignatureModalstyles.saveButtonText}>Save Signature</Text>
@@ -108,4 +120,3 @@ export default function SignatureModal({
     </Modal>
   );
 }
-

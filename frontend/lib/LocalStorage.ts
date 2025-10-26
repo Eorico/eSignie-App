@@ -3,8 +3,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const AGREEMENTS_KEY = '@agreements';
 const PARTIES_KEY = '@parties';
 
+// object agreement
 export interface Agreement {
   id: string;
+  user_email: string; 
   title: string;
   terms: string;
   status: string;
@@ -12,6 +14,7 @@ export interface Agreement {
   updated_at: string;
 }
 
+// object party
 export interface Party {
   id: string;
   agreement_id: string;
@@ -24,13 +27,13 @@ export interface Party {
   created_at: string;
 }
 
+// object na inherited ung agreement
 export interface AgreementWithParties extends Agreement {
   parties: Party[];
 }
 
-const generateId = () => {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-};
+// id generator
+const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
 export const agreementStorage = {
   async getAll(): Promise<Agreement[]> {
@@ -43,32 +46,39 @@ export const agreementStorage = {
     }
   },
 
+  async getByUser(email: string): Promise<Agreement[]> {
+    try {
+      const all = await this.getAll();
+      return all.filter(a => a.user_email === email); // 👈 only user’s agreements
+    } catch (error) {
+      console.error('Error filtering agreements by user:', error);
+      return [];
+    }
+  },
+
   async getById(id: string): Promise<AgreementWithParties | null> {
     try {
       const agreements = await this.getAll();
       const agreement = agreements.find(a => a.id === id);
-
       if (!agreement) return null;
 
       const parties = await partyStorage.getByAgreementId(id);
-
-      return {
-        ...agreement,
-        parties,
-      };
+      return { ...agreement, parties };
     } catch (error) {
       console.error('Error reading agreement:', error);
       return null;
     }
   },
 
-  async create(data: Omit<Agreement, 'id' | 'created_at' | 'updated_at'>): Promise<Agreement> {
+  async create(user_email: string, data: Omit<Agreement, 'id' | 'user_email' | 'created_at' | 'updated_at'>): Promise<Agreement> {
     try {
       const agreements = await this.getAll();
       const now = new Date().toISOString();
+
       const newAgreement: Agreement = {
         ...data,
         id: generateId(),
+        user_email, // 👈 attach user email
         created_at: now,
         updated_at: now,
       };
@@ -87,15 +97,9 @@ export const agreementStorage = {
     try {
       const agreements = await this.getAll();
       const index = agreements.findIndex(a => a.id === id);
-
       if (index === -1) throw new Error('Agreement not found');
 
-      agreements[index] = {
-        ...agreements[index],
-        ...data,
-        updated_at: new Date().toISOString(),
-      };
-
+      agreements[index] = { ...agreements[index], ...data, updated_at: new Date().toISOString() };
       await AsyncStorage.setItem(AGREEMENTS_KEY, JSON.stringify(agreements));
     } catch (error) {
       console.error('Error updating agreement:', error);
@@ -108,7 +112,6 @@ export const agreementStorage = {
       const agreements = await this.getAll();
       const filtered = agreements.filter(a => a.id !== id);
       await AsyncStorage.setItem(AGREEMENTS_KEY, JSON.stringify(filtered));
-
       await partyStorage.deleteByAgreementId(id);
     } catch (error) {
       console.error('Error deleting agreement:', error);
@@ -163,14 +166,9 @@ export const partyStorage = {
     try {
       const parties = await this.getAll();
       const index = parties.findIndex(p => p.id === id);
-
       if (index === -1) throw new Error('Party not found');
 
-      parties[index] = {
-        ...parties[index],
-        ...data,
-      };
-
+      parties[index] = { ...parties[index], ...data };
       await AsyncStorage.setItem(PARTIES_KEY, JSON.stringify(parties));
     } catch (error) {
       console.error('Error updating party:', error);
