@@ -28,6 +28,8 @@ export default function LoginScreen() {
   const router = useRouter();
   // toggle view pass
   const [showPassword, setShowPassword] = useState(false);
+  const AnimatedEye = Animated.createAnimatedComponent(Eye);
+  const AnimatedEyeOff = Animated.createAnimatedComponent(EyeOff);
   //invalid inputs
   const [invalidInputs, setInvalidInputs] = useState({
     email: false,
@@ -38,6 +40,11 @@ export default function LoginScreen() {
   const iconAnim = useRef(new Animated.Value(0)).current;
   const borderAnim = useRef(new Animated.Value(0)).current;
   const errorTextAnim = useRef(new Animated.Value(0)).current;
+  const eyeColorAnim = useRef(new Animated.Value(0)).current;
+  const eyeIconColor = eyeColorAnim.interpolate({
+    inputRange: [0,1],
+    outputRange: ['#666', 'red']
+  });
 
   // Fade effect for invalid inputs
   useEffect(() => {
@@ -57,6 +64,15 @@ export default function LoginScreen() {
           useNativeDriver: false,
         }),
       ]).start();
+
+      if (invalidInputs.password) {
+        eyeColorAnim.setValue(1);
+        Animated.timing(eyeColorAnim, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: false,
+        }).start();
+      }
     }
   }, [invalidInputs]);
 
@@ -123,7 +139,7 @@ export default function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={Loginstyles.container}
     >
       <LinearGradient colors={['#4A90E2', '#357ABD']} style={Loginstyles.gradient}>
@@ -196,9 +212,15 @@ export default function LoginScreen() {
                   style={{paddingHorizontal: 8}}
                 >
                   {showPassword ? (
-                    <Eye size={20} color="#666"/>
+                    <AnimatedEye
+                      size={20}
+                      color={eyeIconColor}
+                    />
                   ):(
-                    <EyeOff size={20} color="#666"/>
+                    <AnimatedEyeOff 
+                      size={20} 
+                      color={eyeIconColor}
+                    />
                   )}
 
                 </TouchableOpacity>

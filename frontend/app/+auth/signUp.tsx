@@ -44,7 +44,13 @@ export default function SignUpScreen() {
   const iconAnim = useRef(new Animated.Value(0)).current;
   const borderAnim = useRef(new Animated.Value(0)).current;
   const textErrorAnim = useRef(new Animated.Value(0)).current;
-
+  const AnimatedEye = Animated.createAnimatedComponent(Eye);
+  const AnimatedEyeOff = Animated.createAnimatedComponent(EyeOff);
+  const eyeColorAnim = useRef(new Animated.Value(0)).current;
+  const eyeIconColor = eyeColorAnim.interpolate({
+    inputRange: [0,1],
+    outputRange: ['#666', 'red']
+  });
   // toggled view pass
 
   const [showPassword, setShowPassword] = useState(false);
@@ -69,6 +75,15 @@ export default function SignUpScreen() {
       ]).start();
     }
   }, [invalidInputs]);
+
+  const triggerEye = () => {
+    eyeColorAnim.setValue(1);
+      Animated.timing(eyeColorAnim, {
+        toValue: 0,
+        duration: 2000,
+        useNativeDriver: false,
+      }).start();
+  };
 
   // Error text fade in/out
   useEffect(() => {
@@ -102,6 +117,7 @@ export default function SignUpScreen() {
     if (Object.values(newInvalids).includes(true)) {
       Vibration.vibrate(200);
       setError('Please fill in all fields');
+      triggerEye();
       return;
     }
 
@@ -116,6 +132,7 @@ export default function SignUpScreen() {
       setInvalidInputs(prev => ({ ...prev, password: true }));
       Vibration.vibrate(200);
       setError('Password must be at least 6 characters');
+      triggerEye();
       return;
     }
 
@@ -123,6 +140,7 @@ export default function SignUpScreen() {
       setInvalidInputs(prev => ({ ...prev, confirmPassword: true }));
       Vibration.vibrate(200);
       setError('Passwords do not match');
+      triggerEye();
       return;
     }
 
@@ -156,7 +174,7 @@ export default function SignUpScreen() {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={SignUpstyles.container}
     >
       <LinearGradient colors={['#5EC792', '#45A577']} style={SignUpstyles.gradient}>
@@ -248,9 +266,15 @@ export default function SignUpScreen() {
                   style={{paddingHorizontal: 8}}
                 >
                   {showPassword ? (
-                    <Eye size={20} color="#666"/>
+                    <AnimatedEye 
+                      size={20} 
+                      color={eyeIconColor}
+                    />
                   ):(
-                    <EyeOff size={20} color="#666"/>
+                    <AnimatedEyeOff 
+                      size={20} 
+                      color={eyeIconColor}
+                      />
                   )}
 
                 </TouchableOpacity>
@@ -281,9 +305,15 @@ export default function SignUpScreen() {
                   style={{paddingHorizontal: 8}}
                 >
                   {showPassword ? (
-                    <Eye size={20} color="#666"/>
+                    <AnimatedEye 
+                      size={20} 
+                      color={eyeIconColor}
+                    />
                   ):(
-                    <EyeOff size={20} color="#666"/>
+                    <AnimatedEyeOff 
+                      size={20} 
+                      color={eyeIconColor}
+                    />
                   )}
 
                 </TouchableOpacity>
