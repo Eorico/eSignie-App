@@ -154,8 +154,8 @@ export default function LoginScreen() {
                   resizeMode="contain"
                 />  
               </View>
-              <Text style={Loginstyles.title}>Welcome Back</Text>
-              <Text style={Loginstyles.subtitle}>Sign in to continue</Text>
+              <Text style={Loginstyles.title}>WELCOME BACK</Text>
+              <Text style={Loginstyles.subtitle}>E-SIGNIE</Text>
             </View>
 
             <View style={Loginstyles.form}>

@@ -261,7 +261,7 @@ export default function SignUpScreen() {
                     setPassword(text);
                     if (text.trim()) setInvalidInputs((p) => ({ ...p, password: false }));
                   }}
-                  secureTextEntry
+                  secureTextEntry={!showPassword}
                   editable={!loading}
                 />
 
@@ -300,7 +300,7 @@ export default function SignUpScreen() {
                     if (text.trim())
                       setInvalidInputs((p) => ({ ...p, confirmPassword: false }));
                   }}
-                  secureTextEntry
+                  secureTextEntry={!showPassword}
                   editable={!loading}
                 />
 

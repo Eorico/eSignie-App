@@ -77,7 +77,7 @@ export const Loginstyles = StyleSheet.create({
     fontWeight: '600',
   },
   button: {
-    backgroundColor: '#D2B48C',
+    backgroundColor: '#af6e18ff',
     borderRadius: 12,
     height: 56,
     justifyContent: 'center',
