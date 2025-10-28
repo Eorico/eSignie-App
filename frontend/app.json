@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "E-AGREEMENT",
-    "slug": "E-AGREEMENT",
+    "name": "ESignie",
+    "slug": "ESignie",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/capybara.png",
     "scheme": "eagreement",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,7 +13,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#D2B48C",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -30,12 +30,12 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/empty.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#D2B48C",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#4B3A2F"
           }
         }
       ]

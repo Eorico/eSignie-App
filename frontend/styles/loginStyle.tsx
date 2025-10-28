@@ -3,9 +3,11 @@ import { StyleSheet } from "react-native";
 export const Loginstyles = StyleSheet.create({
   container: {
     flex: 1,
+    
   },
   gradient: {
     flex: 1,
+    backgroundColor: '#D2B48C',
   },
   scrollContent: {
     flexGrow: 1,
@@ -24,7 +26,6 @@ export const Loginstyles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -76,13 +77,13 @@ export const Loginstyles = StyleSheet.create({
     fontWeight: '600',
   },
   button: {
-    backgroundColor: '#4A90E2',
+    backgroundColor: '#D2B48C',
     borderRadius: 12,
     height: 56,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
-    shadowColor: '#4A90E2',
+    shadowColor: '#D2B48C',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

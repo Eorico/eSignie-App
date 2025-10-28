@@ -35,7 +35,7 @@ export default function AgreementDetail() {
         </TouchableOpacity>
       ),
       headerStyle: {
-        backgroundColor: "#37353E",
+        backgroundColor: "#B5702B",
       },
       headerTitleStyle: {
         color: "#EAEAEA",

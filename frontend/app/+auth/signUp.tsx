@@ -1,3 +1,4 @@
+import { Image } from 'react-native';
 import { useState, useRef, useEffect } from 'react';
 import {
   View,
@@ -177,12 +178,16 @@ export default function SignUpScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={SignUpstyles.container}
     >
-      <LinearGradient colors={['#5EC792', '#45A577']} style={SignUpstyles.gradient}>
+      <LinearGradient colors={['#D2B48C', '#E0AD6C']} style={SignUpstyles.gradient}>
         <ScrollView contentContainerStyle={SignUpstyles.scrollContent}>
           <View style={SignUpstyles.content}>
             <View style={SignUpstyles.header}>
               <View style={SignUpstyles.iconContainer}>
-                <UserPlus color="#FFFFFF" size={48} strokeWidth={2} />
+                <Image
+                  source={require('../../assets/images/add.png')}
+                  style={{ width: 158, height: 158 }}
+                  resizeMode="contain"
+                />
               </View>
               <Text style={SignUpstyles.title}>Create Account</Text>
               <Text style={SignUpstyles.subtitle}>Sign up to get started</Text>
@@ -334,7 +339,7 @@ export default function SignUpScreen() {
               <View style={SignUpstyles.footer}>
                 <Text style={SignUpstyles.footerText}>Already have an account? </Text>
                 <TouchableOpacity
-                  onPress={() => router.replace('/+auth/login')}
+                  onPress={() => router.push('/+auth/login')}
                   disabled={loading}
                 >
                   <Text style={SignUpstyles.linkText}>Go back</Text>

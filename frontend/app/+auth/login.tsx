@@ -1,3 +1,4 @@
+import { Image } from 'react-native';
 import { useState, useRef, useEffect } from 'react';
 import {
   View,
@@ -12,7 +13,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from './context/authContext';
-import { LogIn, Mail, Lock, AlertCircle, EyeOff, Eye } from 'lucide-react-native';
+import { Mail, Lock, AlertCircle, EyeOff, Eye } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Loginstyles } from '@/styles/loginStyle';
 
@@ -142,12 +143,16 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={Loginstyles.container}
     >
-      <LinearGradient colors={['#4A90E2', '#357ABD']} style={Loginstyles.gradient}>
+      <LinearGradient colors={['#D2B48C', '#E0AD6C']} style={Loginstyles.gradient}>
         <ScrollView contentContainerStyle={Loginstyles.scrollContent}>
           <View style={Loginstyles.content}>
             <View style={Loginstyles.header}>
               <View style={Loginstyles.iconContainer}>
-                <LogIn color="#FFFFFF" size={48} strokeWidth={2} />
+                <Image
+                  source={require('../../assets/images/hello.png')}
+                  style={{ width: 108, height: 108 }}
+                  resizeMode="contain"
+                />  
               </View>
               <Text style={Loginstyles.title}>Welcome Back</Text>
               <Text style={Loginstyles.subtitle}>Sign in to continue</Text>

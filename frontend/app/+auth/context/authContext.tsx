@@ -64,7 +64,7 @@ export function AuthProvider ({children}:{children: React.ReactNode}) {
 
             await agreementStorage.create(email, {
                 title: `Welcome to E-Signie: ${name}`,
-                terms: "This is you first saved Agreement.",
+                terms: "This is your first saved Agreement.",
                 status: "Active",
             });
             

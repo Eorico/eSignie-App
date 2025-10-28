@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const CreatedAgreementstyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F6F6F6",
+    backgroundColor: "#fdc48bee",
   },
 
   content: {
@@ -16,7 +16,7 @@ export const CreatedAgreementstyles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#F6F6F6",
+    backgroundColor: "#fdc48bee",
     padding: 32,
   },
 
@@ -78,7 +78,7 @@ export const CreatedAgreementstyles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: 12,
-    backgroundColor: "#F3F4F6",
+    backgroundColor: "#FAB875",
   },
 
   statusText: {
