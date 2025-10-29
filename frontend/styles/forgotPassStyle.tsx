@@ -36,7 +36,6 @@ export const ForgotPassstyles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -81,7 +80,7 @@ export const ForgotPassstyles = StyleSheet.create({
     color: '#333',
   },
   button: {
-    backgroundColor: '#F39C12',
+    backgroundColor: '#af6e18ff',
     borderRadius: 12,
     height: 56,
     justifyContent: 'center',

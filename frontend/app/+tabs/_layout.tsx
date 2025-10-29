@@ -7,13 +7,13 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: true,
         headerTitle: "E-Signie",
-        tabBarActiveTintColor: "#B6771D",
+        tabBarActiveTintColor: "#fedfb4ff",
         tabBarInactiveTintColor: "#F5F5F0",
         tabBarStyle: {
-          backgroundColor: "#37353E",
+          backgroundColor: "#552c00ff",
         },
         headerStyle: {
-          backgroundColor: "#37353E",
+          backgroundColor: "#552c00ff",
         },
         headerTintColor: "#F5F5F0",
       }}

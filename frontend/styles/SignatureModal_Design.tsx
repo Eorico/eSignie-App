@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const SignatureModalstyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffbe78ff',
   },
   header: {
     flexDirection: 'row',
@@ -16,11 +16,11 @@ export const SignatureModalstyles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#111827',
+    color: '#3e1e02ff',
   },
   subtitle: {
     fontSize: 14,
-    color: '#6b7280',
+    color: '#3e1e02ff',
     padding: 16,
     paddingTop: 8,
   },
@@ -43,11 +43,11 @@ export const SignatureModalstyles = StyleSheet.create({
     flex: 1,
     padding: 16,
     borderRadius: 25,
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#cd7126ff',
     alignItems: 'center',
   },
   clearButtonText: {
-    color: '#374151',
+    color: '#ffffffff',
     fontSize: 16,
     fontWeight: '600',
   },
@@ -55,11 +55,11 @@ export const SignatureModalstyles = StyleSheet.create({
     flex: 2,
     padding: 16,
     borderRadius: 25,
-    backgroundColor: '#46eb25ff',
+    backgroundColor: '#cd7126ff',
     alignItems: 'center',
   },
   saveButtonDisabled: {
-    backgroundColor: '#46eb25bf',
+    backgroundColor: '#cd7126ff',
   },
   saveButtonText: {
     color: '#ffffff',

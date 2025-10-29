@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const CreateAgreementstyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f9cfa3ff',
   },
   content: {
     padding: 15,
@@ -11,7 +11,7 @@ export const CreateAgreementstyles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#632402ff',
     borderRadius: 6,
     padding: 14,
     fontSize: 16,
@@ -28,11 +28,11 @@ export const CreateAgreementstyles = StyleSheet.create({
     marginBottom: 10,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    color: '#6b7280',
+    color: '#632402ff',
   },
   divider: {
     height: 1,
-    backgroundColor: '#292a2bff',
+    backgroundColor: '#632402ff',
     marginVertical: 24,
   },
   partySectionWrapper: {
@@ -53,7 +53,7 @@ export const CreateAgreementstyles = StyleSheet.create({
   partyLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#6b7280',
+    color: '#632402ff',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -66,7 +66,7 @@ export const CreateAgreementstyles = StyleSheet.create({
     marginBottom: 16,
   },
   addButtonText: {
-    color: '#6b7280',
+    color: '#632402ff',
     fontSize: 15,
     fontWeight: '500',
   },

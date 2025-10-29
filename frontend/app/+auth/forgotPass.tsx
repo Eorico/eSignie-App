@@ -1,3 +1,4 @@
+import { Image } from 'react-native';
 import { useState, useRef, useEffect } from 'react';
 import {
   View,
@@ -121,7 +122,7 @@ export default function ForgotPasswordScreen() {
       style={ForgotPassstyles.container}
     >
       <LinearGradient
-        colors={['#F39C12', '#E67E22']}
+        colors={['#f9a459ff', '#c88f56ff']}
         style={ForgotPassstyles.gradient}
       >
         <ScrollView contentContainerStyle={ForgotPassstyles.scrollContent}>
@@ -136,7 +137,10 @@ export default function ForgotPasswordScreen() {
 
             <View style={ForgotPassstyles.header}>
               <View style={ForgotPassstyles.iconContainer}>
-                <KeyRound color="#FFFFFF" size={48} strokeWidth={2} />
+                <Image
+                  source={require('../../assets/images/forgot.png')}
+                  style={{ width: 140, height: 140 }}
+                />
               </View>
               <Text style={ForgotPassstyles.title}>Forgot Password?</Text>
               <Text style={ForgotPassstyles.subtitle}>

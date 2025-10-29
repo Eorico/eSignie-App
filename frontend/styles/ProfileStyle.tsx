@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const Profilestyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#37353E",
+    backgroundColor: "#432607ff",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
@@ -11,15 +11,15 @@ export const Profilestyles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: "bold",
-    color: "#F5F5F0",
+    color: "#ffffffff",
     marginBottom: 20,
   },
   label: {
-    color: "#E0E0E0",
+    color: "#ffffffff",
     fontSize: 16,
   },
   email: {
-    color: "#B6771D",
+    color: "#ffd8a2ff",
     fontSize: 18,
     fontWeight: "600",
     marginVertical: 10,

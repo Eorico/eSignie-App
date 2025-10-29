@@ -128,7 +128,7 @@ export default function Agreements() {
 
   const renderEmptyState = () => (
     <View style={Agreementstyles.emptyContainer}>
-      <FileText size={64} color="#d1d5db" />
+      <FileText size={64} color="#3379e2ff" />
       <Text style={Agreementstyles.emptyTitle}>No Agreements Yet</Text>
       <Text style={Agreementstyles.emptyText}>
         Create your first agreement using the Create tab
