@@ -11,7 +11,7 @@ import {
   Vibration,
   Animated,
 } from 'react-native';
-import { AlertCircle, UserPlus, Mail, Lock, User, Eye, EyeOff } from 'lucide-react-native';
+import { AlertCircle, UserPlus, Mail, Lock, User, Eye, EyeOff, CheckSquare, Square } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from './context/authContext';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -24,6 +24,7 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [agreeTerms, setAgreeterms] = useState(false);
 
   // validations
   const [invalidInputs, setInvalidInputs] = useState({
@@ -145,6 +146,12 @@ export default function SignUpScreen() {
       return;
     }
 
+    if (!agreeTerms) {
+      setError('Please agree to the terms and conditions.');
+      Vibration.vibrate(200);
+      return;
+    }
+
     setLoading(true);
     const result = await signUp(email, password, name);
     setLoading(false);
@@ -178,7 +185,7 @@ export default function SignUpScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={SignUpstyles.container}
     >
-      <LinearGradient colors={['#D2B48C', '#E0AD6C']} style={SignUpstyles.gradient}>
+      <LinearGradient colors={['#f9a459ff', '#c88f56ff']} style={SignUpstyles.gradient}>
         <ScrollView contentContainerStyle={SignUpstyles.scrollContent}>
           <View style={SignUpstyles.content}>
             <View style={SignUpstyles.header}>
@@ -326,10 +333,32 @@ export default function SignUpScreen() {
                 {invalidInputs.confirmPassword}
               </Animated.View>
 
+              {/* TERMS AND CONDITION */}
               <TouchableOpacity
-                style={[SignUpstyles.button, loading && SignUpstyles.buttonDisabled]}
-                onPress={handleSignUp}
+                onPress={() => setAgreeterms(!agreeTerms)}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: 10,
+                  marginBottom: 10,
+                }}
                 disabled={loading}
+              >
+                {agreeTerms ? (
+                  <CheckSquare color="#4CAF50" size={22} />
+                ) : (
+                  <Square color="#666" size={22} />
+                )}
+                <Text style={{ marginLeft: 8, color: '#333', flex: 1 }}>
+                  I agree to the <Text style={{ color: '#0056b3', textDecorationLine: 'underline' }}>Terms and Conditions</Text>
+                </Text>
+              </TouchableOpacity>
+
+              {/*CREATE BUTTON*/}
+              <TouchableOpacity
+                style={[SignUpstyles.button, (loading || !agreeTerms) && SignUpstyles.buttonDisabled]}
+                onPress={handleSignUp}
+                disabled={loading || !agreeTerms}
               >
                 <Text style={SignUpstyles.buttonText}>
                   {loading ? 'Creating Account...' : 'Create'}

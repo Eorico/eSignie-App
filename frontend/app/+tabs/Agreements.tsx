@@ -96,7 +96,7 @@ export default function Agreements() {
     >
       <View style={Agreementstyles.cardHeader}>
         <View style={Agreementstyles.iconContainer}>
-          <FileText size={24} color="#B6771D" />
+          <FileText size={40} color="#7a4a06ff" />
         </View>
         <View style={Agreementstyles.cardContent}>
           <Text style={Agreementstyles.cardTitle} numberOfLines={1}>
@@ -117,7 +117,7 @@ export default function Agreements() {
               {getStatusText(item.status)}
             </Text>
           </View>
-          <ChevronRight size={20} color="#9ca3af" />
+          <ChevronRight size={20} color="#000000ff" />
         </View>
       </View>
       <Text style={Agreementstyles.cardSubtext} numberOfLines={2}>

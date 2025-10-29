@@ -232,7 +232,7 @@ export default function CreateAgreement() {
               value={title}
               onChangeText={setTitle}
               placeholder="Agreement Title"
-              placeholderTextColor="#9ca3af"
+              placeholderTextColor="#484b4fbd"
             />
           </Animated.View>
 
@@ -268,7 +268,7 @@ export default function CreateAgreement() {
             value={terms}
             onChangeText={setTerms}
             placeholder="Terms and Conditions"
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor="#484b4fbd"
             multiline
             numberOfLines={6}
             textAlignVertical="top"
@@ -339,7 +339,7 @@ export default function CreateAgreement() {
                           ? 'Full Name'
                           : 'Role'
                       }
-                      placeholderTextColor="#9ca3af"
+                      placeholderTextColor="#484b4fbd"
                       keyboardType={field === 'id_number' ? 'numeric' : 'default'}
                     />
                     {invalidFields.parties[i]?.[field] && (

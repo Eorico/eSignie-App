@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const Agreementstyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#cd8d4cff',
+    backgroundColor: '#f9cfa3ff',
   },
   listContent: {
     padding: 16,
@@ -17,17 +17,17 @@ export const Agreementstyles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#e5e7eb',
+    borderColor: '#000000ff',
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconContainer: {
-    width: 40,
-    height: 40,
+    width: 20,
+    height: 30,
     borderRadius: 8,
-    backgroundColor: '#eff6ff',
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,

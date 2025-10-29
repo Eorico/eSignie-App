@@ -1,48 +1,26 @@
 {
   "expo": {
-    "name": "ESignie",
-    "slug": "ESignie",
+    "name": "E-SIGNIE",
+    "slug": "E-SIGNIE",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/capybara.png",
+    "icon": "./assets/images/capybaraIcon.png",
     "scheme": "eagreement",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#D2B48C",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
-      },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
-    },
+    "ios": { "supportsTablet": true },
+    "android": {},
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/capybaraIcon.png"
     },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/empty.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#D2B48C",
-          "dark": {
-            "backgroundColor": "#4B3A2F"
-          }
-        }
-      ]
-    ],
-    "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
+    "plugins": ["expo-router"],
+    "experiments": { "typedRoutes": true, "reactCompiler": true },
+
+    "splash": {
+      "backgroundColor": "#8B4513", 
+      "resizeMode": "contain",
+      "image": "./assets/images/capybaraIcon.png"
     }
   }
 }

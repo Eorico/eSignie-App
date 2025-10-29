@@ -1,58 +1,79 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFR } from "@/hooks/useFR";
 import { AuthProvider, useAuth } from "./+auth/context/authContext";
+import SplashScreen from "./+splashScreen/SplashScreen";
+import { Animated } from "react-native";
 
-// Root lay out para sa routers connections ng mga pages
+// Root layout for router connections
 const RootLayoutNav = () => {
-  const {user, loading} = useAuth(); // ginagamit to for the user accessing at yung loading sa pagloloading once naglogin or create or forget pass
+  const { user, loading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+  const [showSplash, setShowSplash] = useState(true);
 
-  const segments = useSegments(); // segments to be able to identify the current folder structure by the help of index
-  const router = useRouter(); // ito naman ung naghehelp mag navigate ng mga router or pages
+  const fadeAnim = useRef(new Animated.Value(0)).current;
 
+  // Show splash for 3.5 seconds
   useEffect(() => {
-    if (loading) return;
+    const timer = setTimeout(() => setShowSplash(false), 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
-    const inAuthGroup = segments[0] === '+auth';
-    const inTabGroup = segments[0] === '+tabs';
-    const currentScreen = segments[1] as string;  // nirerepresent nito ung folder context 
+  // Handle routing after splash + loading
+  useEffect(() => {
+    if (loading || showSplash) return;
 
-    // kapag wala pang account 
+    const inAuthGroup = segments[0] === "+auth";
+    const inTabGroup = segments[0] === "+tabs";
+    const currentScreen = segments[1] as string;
+
     if (!user && !inAuthGroup) {
       router.replace("/+auth/login");
       return;
     }
-    // once successfull na ung creation ng account 
-    else if (user && inAuthGroup && !['signUp', 'forgotPass'].includes(currentScreen)) {
+
+    if (user && inAuthGroup && !["signUp", "forgotPass"].includes(currentScreen)) {
       router.replace("/+tabs/Agreements");
       return;
     }
-    // kapag none of the previous logic de nagsatisfied dito yan pupunta balik login
-    else if (!user && !inAuthGroup && !inTabGroup) {
+
+    if (!user && !inAuthGroup && !inTabGroup) {
       router.replace("/+auth/login");
     }
-    
 
-}, [user, loading, segments, router]);
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start()
 
+  }, [user, loading, segments, router, showSplash]);
 
+  // Show splash screen first
+  if (showSplash || loading) {
+    return <SplashScreen />;
+  }
+
+  // Render main stack after splash
   return (
+    <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="+auth" />
         <Stack.Screen name="+tabs" />
         <Stack.Screen name="+not-found" />
       </Stack>
+    </Animated.View>
   );
-}
+};
 
 export default function RootLayout() {
   useFR();
-  // heirchy positions ng mga logics determin mo nalang kasi each tags has specific tasks
   return (
     <AuthProvider>
-      <RootLayoutNav/>
-      <StatusBar style="auto"/>
+      <RootLayoutNav />
+      <StatusBar style="auto" />
     </AuthProvider>
   );
 }
