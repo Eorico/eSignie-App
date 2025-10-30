@@ -6,7 +6,7 @@ import { AuthProvider, useAuth } from "./+auth/context/authContext";
 import SplashScreen from "./+splashScreen/SplashScreen";
 import { Animated } from "react-native";
 
-// Root layout for router connections
+// Root layout for router connections: ito ung nagcoconnect sa mga pages
 const RootLayoutNav = () => {
   const { user, loading } = useAuth();
   const segments = useSegments();

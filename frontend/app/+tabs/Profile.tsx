@@ -3,6 +3,8 @@ import { useRouter } from "expo-router";
 import { useAuth } from "../+auth/context/authContext";
 import { Profilestyles } from "@/styles/ProfileStyle";
 
+
+// Comming soon!, Under maintenance yarn
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
   const router = useRouter();

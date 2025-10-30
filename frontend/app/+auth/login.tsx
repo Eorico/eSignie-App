@@ -17,6 +17,7 @@ import { Mail, Lock, AlertCircle, EyeOff, Eye } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Loginstyles } from '@/styles/loginStyle';
 
+// login logic function
 export default function LoginScreen() {
   // inputs
   const [email, setEmail] = useState('');
@@ -138,6 +139,7 @@ export default function LoginScreen() {
     ];
   };
 
+  // xml
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}

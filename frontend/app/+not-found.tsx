@@ -2,6 +2,7 @@ import { Link, Stack } from "expo-router";
 import { Text, View } from "react-native";
 import { NotFoundstyles } from "@/styles/NotFound_Design";
 
+// once na mali ung path or hinde nageexist ung page
 export default function NotFoundScreen() {
   return (
     <>

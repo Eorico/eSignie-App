@@ -18,6 +18,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SignUpstyles } from '@/styles/signUpStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// sign up logic function
 export default function SignUpScreen() {
   // inputs
   const [name, setName] = useState('');
@@ -180,6 +181,7 @@ export default function SignUpScreen() {
     ];
   };
 
+  // xml
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}

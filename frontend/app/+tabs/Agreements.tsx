@@ -12,7 +12,10 @@ import { agreementStorage, type AgreementWithParties } from '@/lib/LocalStorage'
 import { Agreementstyles } from '@/styles/Agreement_Design';
 import { useAuth } from '../+auth/context/authContext';
 
+
+// para sa agreement page
 export default function Agreements() {
+  // logics
   const router = useRouter();
   const [agreements, setAgreements] = useState<AgreementWithParties[]>([]);
   const [loading, setLoading] = useState(true);
@@ -85,10 +88,12 @@ export default function Agreements() {
     }
   };
 
+  // status 
   const getStatusText = (status: string) => {
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
+  // rendering of agreement
   const renderAgreementItem = ({ item }: { item: AgreementWithParties }) => (
     <TouchableOpacity
       style={Agreementstyles.agreementCard}
@@ -126,6 +131,7 @@ export default function Agreements() {
     </TouchableOpacity>
   );
 
+  // render empty state to nikks
   const renderEmptyState = () => (
     <View style={Agreementstyles.emptyContainer}>
       <FileText size={64} color="#3379e2ff" />
@@ -136,6 +142,7 @@ export default function Agreements() {
     </View>
   );
 
+  // once na walang pinakita or nagfailed ung agreement naginawa ito lalabas
   if (error) {
     return (
       <View style={Agreementstyles.errorContainer}>
@@ -147,6 +154,7 @@ export default function Agreements() {
     );
   }
 
+  // render na agreement 
   return (
     <View style={Agreementstyles.container}>
       <FlatList

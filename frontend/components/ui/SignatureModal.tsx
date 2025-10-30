@@ -9,6 +9,7 @@ import SignatureCanvas from 'react-native-signature-canvas';
 import { X } from 'lucide-react-native';
 import { SignatureModalstyles } from '@/styles/SignatureModal_Design';
 
+// signature component
 interface SignatureModalProps {
   visible: boolean;
   onClose: () => void;
@@ -65,6 +66,7 @@ export default function SignatureModal({
 
   const style = `.m-signature-pad--footer {display: none; margin: 0px;}`;
 
+  // xml
   return (
     <Modal
       visible={visible}

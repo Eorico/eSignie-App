@@ -202,6 +202,7 @@ export default function CreateAgreement() {
     }
   };
 
+  // xml
   return (
     <ScrollView style={CreateAgreementstyles.container}>
       <View style={CreateAgreementstyles.content}>

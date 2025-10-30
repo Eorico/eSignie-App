@@ -14,12 +14,20 @@ import SignatureModal from '@/components/ui/SignatureModal';
 import { generatePDF } from '@/utils/pdfGenerator';
 import { CreatedAgreementstyles } from '@/styles/Created_Agreement_Design';
 
+// ito ung agreement details 
 export default function AgreementDetail() {
   const { id } = useLocalSearchParams();
+  // router
   const router = useRouter();
+
+  // inherited agreement 
   const [agreement, setAgreement] = useState<AgreementWithParties | null>(null);
+
+  // loading
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // signature 
   const [signatureModalVisible, setSignatureModalVisible] = useState(false);
   const [selectedPartyId, setSelectedPartyId] = useState<string | null>(null);
 
@@ -94,6 +102,7 @@ export default function AgreementDetail() {
     );
   };
 
+  // dito ung pag maglalagay na ng pirma
   const handleSign = (partyId: string) => {
     setSelectedPartyId(partyId);
     setSignatureModalVisible(true);
@@ -182,6 +191,8 @@ export default function AgreementDetail() {
     );
   }
 
+   
+  // xml
   return (
     <>
       <ScrollView style={CreatedAgreementstyles.container}>

@@ -2,6 +2,8 @@ import { Platform } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import * as Print from 'expo-print';
 
+
+// generated pdf converter
 interface Party {
   name: string;
   role: string;

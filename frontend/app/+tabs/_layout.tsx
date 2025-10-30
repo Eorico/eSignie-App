@@ -1,6 +1,7 @@
 import { Tabs } from "expo-router";
 import { List, FileText, User } from "lucide-react-native"; 
 
+// tab screen or ung nav bar type
 export default function TabLayout() {
   return (
     <Tabs

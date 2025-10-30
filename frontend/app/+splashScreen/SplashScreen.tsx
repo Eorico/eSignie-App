@@ -3,6 +3,8 @@ import { View, StyleSheet, Animated } from "react-native";
 import LottieView from "lottie-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
+
+// splash screen
 export default function SplashScreen({ onFinish }: { onFinish?: () => void }) {
   const fadeAnim = useRef(new Animated.Value(1)).current;
 

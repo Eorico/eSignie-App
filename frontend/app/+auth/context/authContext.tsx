@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { agreementStorage } from "@/lib/LocalStorage";
 
+// para syang .kt sa android studio
+
 // for user inputs
 interface User {
     email: string;

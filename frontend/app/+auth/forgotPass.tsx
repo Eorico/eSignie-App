@@ -17,6 +17,7 @@ import { KeyRound, Mail, ArrowLeft, AlertCircle } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ForgotPassstyles } from '@/styles/forgotPassStyle';
 
+// forgot pass logic function
 export default function ForgotPasswordScreen() {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -116,6 +117,7 @@ export default function ForgotPasswordScreen() {
     ];
   };
 
+  // xml
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
