@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { View, StyleSheet, Animated } from "react-native";
+import { View, StyleSheet, Animated, Text } from "react-native";
 import LottieView from "lottie-react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
@@ -37,6 +37,15 @@ export default function SplashScreen({ onFinish }: { onFinish?: () => void }) {
             style={Spalshstyles.animation}
           />
         </View>
+
+        <View style={Spalshstyles.footerTextContainer}>
+            <Text style={Spalshstyles.madeBy}>
+              FROM:
+            </Text>
+            <Text style={Spalshstyles.names}>
+              Eo and Nikki
+            </Text>
+        </View>
       </LinearGradient>
     </Animated.View>
   );
@@ -59,4 +68,24 @@ const Spalshstyles = StyleSheet.create({
     width: 300,
     height: 300,
   },
+  footerTextContainer: {
+    position: "absolute",
+    bottom: 40,
+    alignItems: "center",
+  },
+  madeBy: {
+    fontSize: 25,
+    color: "#72450aff",
+    opacity: 0.8,
+    fontWeight: 800,
+    fontStyle: "italic",
+  },
+  names: {
+    fontSize: 15,
+    color: "white",
+    opacity: 0.8,
+    marginTop: 4,
+    fontWeight: 600
+  },
+
 });

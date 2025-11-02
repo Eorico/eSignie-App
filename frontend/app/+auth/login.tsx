@@ -1,4 +1,4 @@
-import { Image } from 'react-native';
+import LottieView from 'lottie-react-native';
 import { useState, useRef, useEffect } from 'react';
 import {
   View,
@@ -150,11 +150,13 @@ export default function LoginScreen() {
           <View style={Loginstyles.content}>
             <View style={Loginstyles.header}>
               <View style={Loginstyles.iconContainer}>
-                <Image
-                  source={require('../../assets/images/hello.png')}
-                  style={{ width: 108, height: 108 }}
-                  resizeMode="contain"
-                />  
+                <LottieView
+                  source={require('../../assets/splashAnimation/Hello.json')}
+                  autoPlay
+                  loop
+                  speed={2.5}
+                  style={{ width: 130, height: 130 }}
+                />
               </View>
               <Text style={Loginstyles.title}>WELCOME BACK</Text>
               <Text style={Loginstyles.subtitle}>E-SIGNIE</Text>
