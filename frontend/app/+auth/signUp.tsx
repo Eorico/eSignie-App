@@ -10,6 +10,7 @@ import {
   ScrollView,
   Vibration,
   Animated,
+  Modal,
 } from 'react-native';
 import { AlertCircle, UserPlus, Mail, Lock, User, Eye, EyeOff, CheckSquare, Square } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
@@ -26,6 +27,8 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [agreeTerms, setAgreeterms] = useState(false);
+
+  const [modalVisble, setModalvisible] = useState(false);
 
   // validations
   const [invalidInputs, setInvalidInputs] = useState({
@@ -336,25 +339,31 @@ export default function SignUpScreen() {
               </Animated.View>
 
               {/* TERMS AND CONDITION */}
-              <TouchableOpacity
-                onPress={() => setAgreeterms(!agreeTerms)}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginTop: 10,
-                  marginBottom: 10,
-                }}
-                disabled={loading}
-              >
-                {agreeTerms ? (
-                  <CheckSquare color="#4CAF50" size={22} />
-                ) : (
-                  <Square color="#666" size={22} />
-                )}
-                <Text style={{ marginLeft: 8, color: '#333', flex: 1 }}>
-                  I agree to the <Text style={{ color: '#0056b3', textDecorationLine: 'underline' }}>Terms and Conditions</Text>
-                </Text>
-              </TouchableOpacity>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
+                <TouchableOpacity
+                  onPress={() => setAgreeterms(!agreeTerms)}
+                  disabled={loading}
+                >
+                  
+                  {agreeTerms ? (
+                    <CheckSquare size={24} color="#4CAF50" />
+                  ) : (
+                    <Square size={24} color="#666" />
+                  )}
+                </TouchableOpacity>
+
+                  <Text style={{ marginLeft: 8, color: '#333', flex: 1}}>
+                    I agree to the{''} : {''} 
+                    <Text
+                      style={{ color: '#1E90FF', textDecorationLine: 'underline' }}
+                      onPress={() => setModalvisible(true)}
+                    >
+                      Terms and Conditions
+                    </Text>
+
+                  </Text>
+
+              </View>
 
               {/*CREATE BUTTON*/}
               <TouchableOpacity

@@ -67,6 +67,34 @@ export const Loginstyles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
+  
+  rememberForgotContainer: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginVertical: 15,
+  marginTop: 5,
+  width: '95%',
+  alignSelf: 'center',
+  },
+
+  rememberMeButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  rememberMeText: {
+    marginLeft: 6,
+    color: '#7a4a06',
+    fontWeight: '600',
+    fontSize: 13,
+  },
+
+  forgotPasswordContainer: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+
   forgotPassword: {
     alignSelf: 'flex-end',
     marginBottom: 24,

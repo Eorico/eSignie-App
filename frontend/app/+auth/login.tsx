@@ -1,5 +1,5 @@
 import LottieView from 'lottie-react-native';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, use } from 'react';
 import {
   View,
   Text,
@@ -13,9 +13,10 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from './context/authContext';
-import { Mail, Lock, AlertCircle, EyeOff, Eye } from 'lucide-react-native';
+import { Mail, Lock, AlertCircle, EyeOff, Eye, Square, CheckSquare } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Loginstyles } from '@/styles/loginStyle';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // login logic function
 export default function LoginScreen() {
@@ -23,6 +24,7 @@ export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [rememberMe, setrememberMe] = useState(false);
   // loading
   const [loading, setLoading] = useState(false);
   // login routers
@@ -47,6 +49,21 @@ export default function LoginScreen() {
     inputRange: [0,1],
     outputRange: ['#666', 'red']
   });
+
+  useEffect(() => {
+    const loadRememberMe = async () => {
+      const remember = await AsyncStorage.getItem('rememberMe');
+      const storedEmail = await AsyncStorage.getItem('email');
+      const storedPassword = await AsyncStorage.getItem('password');
+
+      if (remember === 'true' && storedEmail && storedPassword) {
+        setEmail(storedEmail);
+        setPassword(storedPassword);
+        setrememberMe(true);
+      }
+    };
+    loadRememberMe();
+  }, []);
 
   // Fade effect for invalid inputs
   useEffect(() => {
@@ -237,14 +254,30 @@ export default function LoginScreen() {
                 {invalidInputs.password}
 
               </Animated.View>
+              
+              <View style={Loginstyles.rememberForgotContainer}>
+                <TouchableOpacity
+                  style={Loginstyles.rememberMeButton}
+                  onPress={() => setrememberMe(!rememberMe)}
+                  disabled={loading}
+                >
+                  {rememberMe ? (
+                    <CheckSquare size={18} color={'#7a4a06'} />
+                  ) : (
+                    <Square size={18} color={'#7a4a06'} />
+                  )}
+                  <Text style={Loginstyles.rememberMeText}>Remember Me</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={Loginstyles.forgotPassword}
-                onPress={() => router.push('/+auth/forgotPass')}
-                disabled={loading}
-              >
-                <Text style={Loginstyles.forgotPasswordText}>Forgot Password?</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={Loginstyles.forgotPasswordContainer}
+                  onPress={() => router.push('/+auth/forgotPass')}
+                  disabled={loading}
+                >
+                  <Text style={Loginstyles.forgotPasswordText}>Forgot Password?</Text>
+                </TouchableOpacity>
+              </View>
+
 
               <TouchableOpacity
                 style={[Loginstyles.button, loading && Loginstyles.buttonDisabled]}

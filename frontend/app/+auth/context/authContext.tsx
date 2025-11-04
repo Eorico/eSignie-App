@@ -37,7 +37,21 @@ export function AuthProvider ({children}:{children: React.ReactNode}) {
             const userData = await AsyncStorage.getItem(CURRENTUSERKEY);
             if (userData) {
                 setUser(JSON.parse(userData));
+            } else {
+                const remember = await AsyncStorage.getItem('rememberMe');
+                const storedEmail = await AsyncStorage.getItem('email');
+                const storedPassword = await AsyncStorage.getItem('password');
+
+                if (remember === 'true' && storedEmail && storedPassword) {
+                    const result = await login(storedEmail, storedPassword);
+                    if (result.success) {
+                        console.log('User logged in from remember me');
+                    } else {
+                        console.error(`Auto login failed: ${result.error}`);
+                    }
+                }
             }
+
         } catch (error) {
             console.error(`Error loading user: ${error}`);
         } finally {
@@ -67,7 +81,7 @@ export function AuthProvider ({children}:{children: React.ReactNode}) {
             await agreementStorage.create(email, {
                 title: `Welcome to E-Signie: ${name}`,
                 terms: "This is your first saved Agreement.",
-                status: "Active",
+                status: "Default",
             });
             
 
