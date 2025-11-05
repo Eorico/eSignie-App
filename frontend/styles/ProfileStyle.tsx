@@ -129,5 +129,6 @@ export const Profilestyles = StyleSheet.create({
     borderColor: "#9A3F3F",
     shadowColor: "#9A3F3F",
     shadowOpacity: 0.3,
+    borderRadius: 30
   },
 });

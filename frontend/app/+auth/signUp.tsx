@@ -385,6 +385,94 @@ export default function SignUpScreen() {
                   <Text style={SignUpstyles.linkText}>Go back</Text>
                 </TouchableOpacity>
               </View>
+
+              <Modal
+                animationType='fade'
+                transparent={true}
+                visible={modalVisble}
+                onRequestClose={() => setModalvisible(false)}
+              >
+
+                <View
+                  style={{ 
+                    flex: 1, 
+                    backgroundColor: 'rgba(0,0,0,0.5)', 
+                    justifyContent: 'center', 
+                    alignContent: 'center' , 
+                    padding: 20,
+                  }}
+                >
+
+                  <View
+                    style={{
+                      backgroundColor: '#fff',
+                      borderRadius: 10,
+                      padding: 25,
+                      width: '100%',
+                      maxWidth: 400,
+                      elevation: 5,
+                    }}
+                  >
+
+                    <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color:'#333'}}>
+                      Terms and Conditions
+                    </Text>
+
+                    <ScrollView style={{ maxHeight: 250, marginBottom: 15 }}>
+                      <Text style={{ fontSize: 14, color: '#555', lineHeight: 22 }}>
+                        Welcom to E-Signie🦫! By creating an account, you agree to use this app responsibly. 
+                        Do not share you password with others. You are responsible for all activity under you account.
+                        Your information will be stored locally and securely.
+                        We may update these terms from time to time, so please review them periodically.
+                        If you have any questions, contact us at esignie@gmail.com
+                      </Text>
+                    </ScrollView>
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                      <TouchableOpacity
+                        onPress={() => setModalvisible(false)}
+                        style={{ 
+                          paddingVertical: 10, 
+                          paddingHorizontal: 20,
+                          backgroundColor: '#ccc',
+                          borderRadius: 10, 
+                         }}
+                      >
+
+                        <Text style={{ color: '#333', fontWeight: '600' }}>
+                            Cancel
+                        </Text>
+
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        onPress={() => {
+                          setAgreeterms(true);
+                          setModalvisible(false);
+                        }}
+
+                        style={{
+                          paddingVertical: 10, 
+                          paddingHorizontal: 20,
+                          backgroundColor: '#4CAF50',
+                          borderRadius: 10, 
+                        }}
+                      >
+
+                        <Text style={{ color: '#fff', fontWeight: '600' }}>
+                          I Agree
+                        </Text>
+                        
+                      </TouchableOpacity>
+
+                    </View>
+
+                  </View>
+
+                </View>
+                
+              </Modal>
+
             </View>
           </View>
         </ScrollView>
