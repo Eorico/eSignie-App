@@ -11,6 +11,7 @@ import {
   Vibration,
   Animated,
   Modal,
+  ActivityIndicator
 } from 'react-native';
 import { AlertCircle, UserPlus, Mail, Lock, User, Eye, EyeOff, CheckSquare, Square } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
@@ -157,12 +158,17 @@ export default function SignUpScreen() {
     }
 
     setLoading(true);
-    const result = await signUp(email, password, name);
+
+    const delay = new Promise(res => setTimeout(res, 3000));
+    const resultPromise = signUp(email, password, name);
+    const [result] = await Promise.all([resultPromise, delay]);
+    
     setLoading(false);
 
     if (!result.success) {
       setError(result.error || 'Failed to create account');
     } else {
+      await AsyncStorage.setItem('ACCOUNT_CREATED', 'true')
       await AsyncStorage.removeItem('CURRRENT_USER');
       router.replace('/+auth/login');
     }
@@ -371,9 +377,14 @@ export default function SignUpScreen() {
                 onPress={handleSignUp}
                 disabled={loading || !agreeTerms}
               >
-                <Text style={SignUpstyles.buttonText}>
-                  {loading ? 'Creating Account...' : 'Create'}
-                </Text>
+                {loading ? (
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <ActivityIndicator size={'small'} color={'#fff'} style={{ marginRight: 10 }}/>
+                    <Text style={SignUpstyles.buttonText}>Creating Account...</Text>
+                  </View>
+                ) : (
+                  <Text style={SignUpstyles.buttonText}>Create</Text>
+                )}
               </TouchableOpacity>
 
               <View style={SignUpstyles.footer}>
@@ -385,7 +396,8 @@ export default function SignUpScreen() {
                   <Text style={SignUpstyles.linkText}>Go back</Text>
                 </TouchableOpacity>
               </View>
-
+              
+              {/* Modal */}
               <Modal
                 animationType='fade'
                 transparent={true}

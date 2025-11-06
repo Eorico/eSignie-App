@@ -1,15 +1,19 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity, Image, Modal, ScrollView } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { QrCode, HelpCircle, Info, LogOut, Plus } from "lucide-react-native";
+import { QrCode, HelpCircle, Info, LogOut, Plus, XCircle } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../+auth/context/authContext";
 import { Profilestyles } from "@/styles/ProfileStyle";
 import { useState } from "react";
+import QRCode from 'react-native-qrcode-svg';
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  const [modalVisible, setmodalVisible] = useState(false);
+  const [modalType, setmodalType] = useState<'qr'| 'support' | 'about' | null>(null);
 
   const handleImagePick = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -39,6 +43,16 @@ export default function ProfileScreen() {
       console.error("Logout failed:", error);
     }
   };
+
+  const openModal = (type: 'qr' | 'support' | 'about') => {
+    setmodalType(type);
+    setmodalVisible(true);
+  };
+
+  const closeModal = () => {
+    setmodalVisible(false);
+    setmodalType(null);
+  }
 
   return (
     <View style={Profilestyles.container}>
@@ -92,17 +106,29 @@ export default function ProfileScreen() {
 
       {/* Menu Section */}
       <View style={Profilestyles.menuSection}>
-        <TouchableOpacity style={Profilestyles.menuCard} activeOpacity={0.8}>
+        <TouchableOpacity 
+          style={Profilestyles.menuCard} 
+          activeOpacity={0.8}
+          onPress={() => openModal('qr')}
+          >
           <QrCode color="#f5d9b2ff" size={25} />
           <Text style={Profilestyles.menuText}>QR Code</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={Profilestyles.menuCard}  activeOpacity={0.8}>
+        <TouchableOpacity 
+          style={Profilestyles.menuCard}  
+          activeOpacity={0.8}
+          onPress={() => openModal('support')}
+          >
           <HelpCircle color="#f5d9b2ff" size={25} />
           <Text style={Profilestyles.menuText}>Support</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={Profilestyles.menuCard}  activeOpacity={0.8}>
+        <TouchableOpacity 
+          style={Profilestyles.menuCard}  
+          activeOpacity={0.8}
+          onPress={() => openModal('about')}
+          >
           <Info color="#f5d9b2ff" size={25} />
           <Text style={Profilestyles.menuText}>About</Text>
         </TouchableOpacity>
@@ -112,6 +138,146 @@ export default function ProfileScreen() {
           <Text style={[Profilestyles.menuText, {color: 'white'}]}>Logout</Text>
         </TouchableOpacity>
       </View>
+      
+      <Modal
+        animationType="slide"
+        transparent={true} 
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+       
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+          }}
+        >
+          
+          <View
+            style={{
+              backgroundColor: '#c17a37ff',
+              borderTopLeftRadius: 25,
+              borderTopRightRadius: 25,
+              paddingVertical: 20,
+              paddingHorizontal: 20,
+              maxHeight: '80%',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: -3 },
+              shadowOpacity: 0.5,
+              shadowRadius: 5,
+              elevation: 20,
+            }}
+          >
+            {/* Header */}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 15,
+              }}
+            >
+              <Text style={{ fontSize: 22, fontWeight: '700', color: '#ffffffff' }}>
+                {modalType === 'qr'
+                  ? `${user?.name} QR Code`
+                  : modalType === 'support'
+                  ? 'Support'
+                  : 'About E-Signie'}
+              </Text>
+              <TouchableOpacity onPress={closeModal}>
+                <XCircle size={23} color="#ffffffff" />
+              </TouchableOpacity>
+            </View>
+
+            {/* Content */}
+            <ScrollView
+              contentContainerStyle={{
+                paddingBottom: 40,
+              }}
+              showsVerticalScrollIndicator={false}
+            >
+              {modalType === 'qr' && (
+                <View
+                  style={{
+                    alignItems: 'center',
+                    paddingVertical: 20,
+                    backgroundColor: '#fff',
+                    borderRadius: 20,
+                    shadowColor: '#000',
+                    shadowOpacity: 1,
+                    shadowOffset: { width: 0, height: 3 },
+                    shadowRadius: 5,
+                    elevation: 5,
+                  }}
+                >
+                  {user?.email ? (
+                    <QRCode
+                      value={user.email}
+                      size={300}
+                      backgroundColor="white"
+                    />
+                  ) : (
+                    <Text>No QR Available</Text>
+                  )}
+                </View>
+              )}
+
+              {modalType === 'support' && (
+                <View
+                  style={{
+                    padding: 20,
+                    backgroundColor: '#fff',
+                    borderRadius: 20,
+                    shadowColor: '#000',
+                    shadowOpacity: 1,
+                    shadowOffset: { width: 0, height: 3 },
+                    shadowRadius: 5,
+                    elevation: 5,
+                  }}
+                >
+                  <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color: '#7a4a06ff' }}>
+                    Support
+                  </Text>
+                  <Text style={{ fontSize: 16, lineHeight: 24, color: '#333' }}>
+                    If you require assistance, have any questions, or encounter any issues, our support team is here to help. 
+                    Please contact us at esignie_support@gmail.com, and one of our knowledgeable representatives will get back to you as promptly as possible. We are dedicated to providing timely, 
+                    thorough, and friendly support to ensure that your experience with our services is seamless and enjoyable. 
+                    Whether you need guidance, troubleshooting, or simply more information, we take every inquiry seriously and strive to resolve your concerns efficiently. 
+                    Your satisfaction and peace of mind are our top priorities, and we are committed to offering the support you need whenever you need it.
+                  </Text>
+                </View>
+              )}
+
+              {modalType === 'about' && (
+                <View
+                  style={{
+                    padding: 20,
+                    backgroundColor: '#fff',
+                    borderRadius: 20,
+                    shadowColor: '#000',
+                    shadowOpacity: 1,
+                    shadowOffset: { width: 0, height: 3 },
+                    shadowRadius: 5,
+                    elevation: 5,
+                  }}
+                >
+                  <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color: '#7a4a06ff' }}>
+                    About E-Signie
+                  </Text>
+                  <Text style={{ fontSize: 16, lineHeight: 24, color: '#333' }}>
+                    E-Signie is an innovative online agreement platform designed to streamline and simplify document management, ensuring that every process is handled securely, efficiently, and effortlessly. 
+                    Our goal is to eliminate the traditional complexities of paperwork, allowing individuals and businesses to create, send, sign, and store agreements entirely online. With a strong focus on security, speed, and reliability, E-Signie is committed to providing a seamless experience that saves time, reduces errors, and enhances productivity. 
+                    Our mission is to offer a trusted, fast, and dependable service that empowers users to manage their documents with confidence and peace of mind.
+                  </Text>
+                </View>
+              )}
+            </ScrollView>
+            
+          </View>
+        </View>
+
+      </Modal>
+   
     </View>
   );
 }

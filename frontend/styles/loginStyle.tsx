@@ -35,6 +35,7 @@ export const Loginstyles = StyleSheet.create({
     fontWeight: '700',
     color: '#FFFFFF',
     marginBottom: 8,
+    fontStyle: 'italic'
   },
   subtitle: {
     fontSize: 16,

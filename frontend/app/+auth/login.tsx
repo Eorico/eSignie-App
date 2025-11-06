@@ -10,6 +10,7 @@ import {
   ScrollView,
   Vibration,
   Animated,
+  Modal
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from './context/authContext';
@@ -41,6 +42,7 @@ export default function LoginScreen() {
   });
 
   // Animation refs
+  const fadeAnim = useRef(new Animated.Value(1)).current;
   const iconAnim = useRef(new Animated.Value(0)).current;
   const borderAnim = useRef(new Animated.Value(0)).current;
   const errorTextAnim = useRef(new Animated.Value(0)).current;
@@ -49,6 +51,46 @@ export default function LoginScreen() {
     inputRange: [0,1],
     outputRange: ['#666', 'red']
   });
+
+  const loginGreetings = [
+    'Hello there!', 'Nice to see you back!',
+    'Welcome Back!', 'Good Day!', 'Howly Mowly'
+  ];
+  const [curIndex, setCurIndex] = useState(0);
+
+  const [success, setSuccessModal] = useState(false);
+
+  useEffect(() => {
+    const checkAccountCreated = async () => {
+      const accountCreated = await AsyncStorage.getItem('ACCOUNT_CREATED');
+      if (accountCreated === 'true') {
+        setSuccessModal(true);
+        setTimeout(() => setSuccessModal(false), 3000);
+        await AsyncStorage.removeItem('ACCOUNT_CREATED');
+      }
+    };
+    checkAccountCreated();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true
+      }).start(() => {
+        setCurIndex((prevIndex) => (prevIndex + 1) % loginGreetings.length);
+
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true
+        }).start();
+      });
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [fadeAnim]);
 
   useEffect(() => {
     const loadRememberMe = async () => {
@@ -175,7 +217,7 @@ export default function LoginScreen() {
                   style={{ width: 130, height: 130 }}
                 />
               </View>
-              <Text style={Loginstyles.title}>WELCOME BACK</Text>
+              <Animated.Text style={[Loginstyles.title, {opacity: fadeAnim}]}>{loginGreetings[curIndex]}</Animated.Text>
               <Text style={Loginstyles.subtitle}>E-SIGNIE</Text>
             </View>
 
@@ -301,6 +343,48 @@ export default function LoginScreen() {
             </View>
           </View>
         </ScrollView>
+        
+        <Modal
+          visible={success}
+          transparent
+          animationType='fade'
+        >
+
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: 'rgba(0,0,0,0.5)'
+            }}
+          >
+
+            <View
+              style={{
+                width: 250, 
+                padding: 20,
+                backgroundColor: 'white',
+                borderRadius: 10,
+                alignItems: 'center',
+              }}
+            >
+
+              <LottieView
+                source={require('../../assets/splashAnimation/success.json')}
+                autoPlay
+                loop={false}
+                style={{ width: 150, height: 150 }}
+              />
+              <Text style={{ marginTop: 10, fontSize: 15, fontWeight: '600', textAlign: 'center' }}>
+                Account Successfully Created!
+              </Text>
+
+            </View>
+
+          </View>
+
+        </Modal>
+
       </LinearGradient>
     </KeyboardAvoidingView>
   );
