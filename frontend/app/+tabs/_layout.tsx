@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { Tabs } from "expo-router";
 import { List, FileText, User, Bell, XCircle, Settings } from "lucide-react-native"; 
 import { useState } from "react";
@@ -6,7 +7,7 @@ import { useAuth } from "../+auth/context/authContext";
 
 export default function TabLayout() {
   const {user} = useAuth();
-
+  const router = useRouter();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const notif = useState<boolean>(true);
   const handleBellPress = (event: GestureResponderEvent) => {
@@ -94,7 +95,7 @@ export default function TabLayout() {
                         </View>
                       </>
                     ):(
-                      <text style={NotifStyle.notificationText}>No new notifications</text>
+                      <Text style={NotifStyle.notificationText}>No new notifications</Text>
                     )}
                     
                   </View>
@@ -128,9 +129,8 @@ export default function TabLayout() {
           headerTitle: user ? `${user.email}` : "Profile",
           tabBarIcon: ({ size, color }) => <User size={size} color={color} />,
           headerRight: () => (
-            <Pressable
-              onPress={() => alert('Settings Triggered')} // ito sayo nikks nakaabang
-            >
+            <Pressable onPress={() => router.push('/settings')}> 
+            
               <Settings size={25} color='#F5F5F0' style={{ marginRight: 20 }}/>
             </Pressable>
           ),
