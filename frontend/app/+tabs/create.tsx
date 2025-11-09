@@ -218,24 +218,18 @@ export default function CreateAgreement() {
             }),
           }}
         >
-          <Animated.View
-            style={{
-              borderWidth: invalidFields.title ? 1 : 0,
-              borderColor: fadeTitle.interpolate({
-                inputRange: [0, 1],
-                outputRange: ['transparent', 'red'],
-              }),
-              borderRadius: 5,
-            }}
-          >
             <TextInput
-              style={[CreateAgreementstyles.input]}
+              style={[
+                CreateAgreementstyles.input,
+                {
+                  borderColor: invalidFields.title ? 'red' : '#632402ff',
+                }
+              ]}
               value={title}
               onChangeText={setTitle}
               placeholder="Agreement Title"
               placeholderTextColor="#484b4fbd"
             />
-          </Animated.View>
 
           {invalidFields.title && (
             <Animated.View
@@ -256,16 +250,10 @@ export default function CreateAgreement() {
           style={{
             position: 'relative',
             marginTop: 10,
-            borderWidth: invalidFields.terms ? 1 : 0,
-            borderColor: fadeTerms.interpolate({
-              inputRange: [0, 1],
-              outputRange: ['transparent', 'red'],
-            }),
-            borderRadius: 5,
           }}
         >
           <TextInput
-            style={[CreateAgreementstyles.input, CreateAgreementstyles.textArea]}
+            style={[CreateAgreementstyles.input, CreateAgreementstyles.textArea, {borderColor: invalidFields.terms ? 'red': '#632402ff'}]}
             value={terms}
             onChangeText={setTerms}
             placeholder="Terms and Conditions"
@@ -312,19 +300,10 @@ export default function CreateAgreement() {
                     style={{
                       position: 'relative',
                       marginBottom: 8,
-                      borderWidth:
-                        invalidFields.parties[i]?.[field] && fadeParties[i]
-                          ? 1
-                          : 0,
-                      borderColor: fadeParties[i]?.[j]?.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['transparent', 'red'],
-                      }),
-                      borderRadius: 5,
                     }}
                   >
                     <TextInput
-                      style={[CreateAgreementstyles.input]}
+                      style={[CreateAgreementstyles.input, {borderColor: invalidFields.parties[i]?.[field] && fadeParties[i] ? 'red': '#632402ff'}]}
                       value={
                         field === 'id_number'
                           ? party.id_number

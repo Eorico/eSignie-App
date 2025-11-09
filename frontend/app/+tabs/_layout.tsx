@@ -23,18 +23,15 @@ export default function TabLayout() {
         tabBarInactiveTintColor: "#F5F5F0",
         tabBarStyle: {
           backgroundColor: "#552c00ff",
-          position: "absolute",
           shadowRadius: 5,
-          height: 60,
           paddingBottom: 5,
           borderTopLeftRadius: 20,
-          borderTopRightRadius: 20
+          borderTopRightRadius: 20,
+          overflow: 'hidden',
+          position: 'absolute'
         },
         headerStyle: {
           backgroundColor: "#552c00ff",
-          borderRadius: 5,
-          shadowRadius: 2,
-          position: "absolute",
         },
         headerTintColor: "#F5F5F0",
 

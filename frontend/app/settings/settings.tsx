@@ -48,7 +48,7 @@ export default function SettingsScreen() {
           <ArrowLeft color="#F5F5F0" size={25} />
         </Pressable>
         <Text style={styles.headerTitle}>Settings</Text>
-        <View style={{ width: 25 }} /> {/* spacer */}
+        <View style={{ width: 25 }}></View>
       </View>
 
       {/* Settings List */}

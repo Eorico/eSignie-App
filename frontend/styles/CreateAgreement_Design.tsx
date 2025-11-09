@@ -11,7 +11,6 @@ export const CreateAgreementstyles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#632402ff',
     borderRadius: 6,
     padding: 14,
     fontSize: 16,
@@ -72,10 +71,10 @@ export const CreateAgreementstyles = StyleSheet.create({
   },
   saveButton: {
     backgroundColor: '#9A3F3F',
-    padding: 16,
+    padding: 15,
     borderRadius: 6,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 1,
   },
   saveButtonDisabled: {
     backgroundColor: '#9ca3af',

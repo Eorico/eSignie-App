@@ -155,7 +155,7 @@ export default function ProfileScreen() {
           
           <View
             style={{
-              backgroundColor: '#c17a37ff',
+              backgroundColor: '#8B5E3C',
               borderTopLeftRadius: 25,
               borderTopRightRadius: 25,
               paddingVertical: 20,
@@ -181,8 +181,8 @@ export default function ProfileScreen() {
                 {modalType === 'qr'
                   ? `${user?.name} QR Code`
                   : modalType === 'support'
-                  ? 'Support'
-                  : 'About E-Signie'}
+                  ? ''
+                  : ''}
               </Text>
               <TouchableOpacity onPress={closeModal}>
                 <XCircle size={23} color="#ffffffff" />
@@ -235,7 +235,7 @@ export default function ProfileScreen() {
                     elevation: 5,
                   }}
                 >
-                  <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color: '#7a4a06ff' }}>
+                  <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color: '#7a4a06ff', textAlign: 'center' }}>
                     Support
                   </Text>
                   <Text style={{ fontSize: 16, lineHeight: 24, color: '#333' }}>
@@ -261,7 +261,7 @@ export default function ProfileScreen() {
                     elevation: 5,
                   }}
                 >
-                  <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color: '#7a4a06ff' }}>
+                  <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color: '#7a4a06ff', textAlign: 'center' }}>
                     About E-Signie
                   </Text>
                   <Text style={{ fontSize: 16, lineHeight: 24, color: '#333' }}>
