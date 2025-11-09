@@ -25,7 +25,8 @@ export default function TabLayout() {
           backgroundColor: "#552c00ff",
           position: "absolute",
           shadowRadius: 5,
-          paddingBottom: 20,
+          height: 60,
+          paddingBottom: 5,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20
         },
@@ -129,7 +130,7 @@ export default function TabLayout() {
           headerTitle: user ? `${user.email}` : "Profile",
           tabBarIcon: ({ size, color }) => <User size={size} color={color} />,
           headerRight: () => (
-            <Pressable onPress={() => router.push('/settings')}> 
+            <Pressable onPress={() => router.replace('../settings/settings')}> 
             
               <Settings size={25} color='#F5F5F0' style={{ marginRight: 20 }}/>
             </Pressable>

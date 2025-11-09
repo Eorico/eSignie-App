@@ -33,7 +33,7 @@ export default function SettingsScreen() {
   // ✅ Simplified settings options
   const settingsOptions = [
     { title: "Dark Mode / Light Mode", icon: Moon },
-    { title: "Account & Privacy", icon: Shield, onPress: () => router.push("/accountAndPrivacy") },
+    { title: "Account & Privacy", icon: Shield, onPress: () => router.push("./accountAndPrivacy") },
     { title: "Language", icon: Globe },
     { title: "Notification Permission", icon: Bell },
     { title: "Login History", icon: History },
@@ -44,7 +44,7 @@ export default function SettingsScreen() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.back()}>
+        <Pressable onPress={() => router.replace('/+tabs/Profile')}>
           <ArrowLeft color="#F5F5F0" size={25} />
         </Pressable>
         <Text style={styles.headerTitle}>Settings</Text>

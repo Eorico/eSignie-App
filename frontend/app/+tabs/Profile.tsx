@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Image, Modal, ScrollView } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { QrCode, HelpCircle, Info, LogOut, Plus, XCircle } from "lucide-react-native";
+import { QrCode, HelpCircle, Info, LogOut, Plus, XCircle, User2Icon } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../+auth/context/authContext";
 import { Profilestyles } from "@/styles/ProfileStyle";
@@ -64,7 +64,7 @@ export default function ProfileScreen() {
               <Image source={{ uri: profileImage }} style={Profilestyles.profileImage} />
             ) : (
               <View style={Profilestyles.placeholderCircle}>
-                <Plus size={25} color="#ffd8a2ff" />
+                <User2Icon size={25} color="#ffd8a2ff" />
               </View>
             )}
           </TouchableOpacity>
