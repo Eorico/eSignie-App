@@ -121,7 +121,7 @@ export default function ProfileScreen() {
           onPress={() => openModal('support')}
           >
           <HelpCircle color="#f5d9b2ff" size={25} />
-          <Text style={Profilestyles.menuText}>Support</Text>
+          <Text style={Profilestyles.menuText}>Support of E-Signie</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -130,7 +130,7 @@ export default function ProfileScreen() {
           onPress={() => openModal('about')}
           >
           <Info color="#f5d9b2ff" size={25} />
-          <Text style={Profilestyles.menuText}>About</Text>
+          <Text style={Profilestyles.menuText}>About E-Signie</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[Profilestyles.menuCard, Profilestyles.logoutCard]} onPress={handleLogout} activeOpacity={0.8}>
@@ -236,7 +236,7 @@ export default function ProfileScreen() {
                   }}
                 >
                   <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color: '#7a4a06ff', textAlign: 'center' }}>
-                    Support
+                    Support of E-Signie
                   </Text>
                   <Text style={{ fontSize: 16, lineHeight: 24, color: '#333' }}>
                     If you require assistance, have any questions, or encounter any issues, our support team is here to help. 

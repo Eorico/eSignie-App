@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import { Tabs } from "expo-router";
-import { List, FileText, User, Bell, XCircle, Settings } from "lucide-react-native"; 
-import { useState } from "react";
-import { Modal, Pressable, GestureResponderEvent, Text, StyleSheet, View} from "react-native";
+import { List, User, Bell, XCircle, Settings,PlusCircle } from "lucide-react-native"; 
+import { useRef, useState } from "react";
+import { Modal, Pressable, GestureResponderEvent, Text, StyleSheet, View, Animated} from "react-native";
 import { useAuth } from "../+auth/context/authContext";
 
 export default function TabLayout() {
@@ -25,9 +25,8 @@ export default function TabLayout() {
           backgroundColor: "#552c00ff",
           shadowRadius: 5,
           paddingBottom: 5,
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-          overflow: 'hidden',
+          borderTopLeftRadius: 15,
+          borderTopRightRadius: 15,
           position: 'absolute'
         },
         headerStyle: {
@@ -113,10 +112,61 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="create"
+        name="CreateAgreement"
         options={{
-          title: "Create +",
-          tabBarIcon: ({ size, color }) => <FileText size={size} color={color} />,
+          tabBarIcon: () => null,
+          tabBarLabel: () => null,
+          tabBarButton: (props) => {
+            const {onPress, accessibilityState} = props;
+            const moveButtonAnim = useRef(new Animated.Value(0)).current;
+
+            const handlePress = (event: GestureResponderEvent) => {
+              Animated.sequence([
+                Animated.timing(moveButtonAnim, {
+                  toValue: 10,
+                  duration: 150,
+                  useNativeDriver: true,
+                }),
+                Animated.timing(moveButtonAnim, {
+                  toValue: 0,
+                  duration: 150,
+                  useNativeDriver: true,
+                }),
+              ]).start();
+
+             if (onPress) onPress(event);
+            }
+
+            return (
+              <Animated.View style={{ 
+                position: 'absolute',
+                top: -15, // float above the tab bar
+                left: '50%',
+                transform: [{ translateX: -30 }, { translateY: moveButtonAnim }],
+                zIndex: 10, // above tab bar
+              }}>
+                <Pressable
+                  onPress={handlePress}
+                  style={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: 30,
+                    backgroundColor: "#9A3F3F",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    shadowColor: "#000",
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.3,
+                    shadowRadius: 4.65,
+                    elevation: 8,
+                    borderWidth: 2,
+                    borderColor: '#762a2aff'
+                  }}
+                >
+                  <Text style={{ color: "#fff", fontSize: 30, fontWeight: "bold" }}>+</Text>
+                </Pressable>
+              </Animated.View>
+            )},
         }}
       />
 

@@ -134,7 +134,7 @@ export default function Agreements() {
   // render empty state to nikks
   const renderEmptyState = () => (
     <View style={Agreementstyles.emptyContainer}>
-      <FileText size={64} color="#3379e2ff" />
+      <FileText size={64} color="#6c6f74ff" />
       <Text style={Agreementstyles.emptyTitle}>No Agreements Yet</Text>
       <Text style={Agreementstyles.emptyText}>
         Create your first agreement using the Create tab

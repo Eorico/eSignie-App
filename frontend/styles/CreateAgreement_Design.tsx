@@ -18,16 +18,17 @@ export const CreateAgreementstyles = StyleSheet.create({
     marginBottom: 12,
   },
   textArea: {
-    minHeight: 100,
+    minHeight: 200,
     paddingTop: 14,
   },
-  titleAndterms: {
-    fontSize: 16,
+  title: {
+    fontSize: 18,
     fontWeight: "800",
     marginBottom: 10,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     color: '#632402ff',
+    textAlign: 'center'
   },
   divider: {
     height: 1,
@@ -35,7 +36,8 @@ export const CreateAgreementstyles = StyleSheet.create({
     marginVertical: 24,
   },
   partySectionWrapper: {
-    height: 280,
+    flexGrow: 1,
+    marginTop: 10,
   },
   partySection: {
     marginBottom: 0,
