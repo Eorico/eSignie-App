@@ -112,7 +112,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="CreateAgreement"
+        name="SelectAgreement"
         options={{
           tabBarIcon: () => null,
           tabBarLabel: () => null,
@@ -140,10 +140,10 @@ export default function TabLayout() {
             return (
               <Animated.View style={{ 
                 position: 'absolute',
-                top: -15, // float above the tab bar
+                top: -15,  
                 left: '50%',
                 transform: [{ translateX: -30 }, { translateY: moveButtonAnim }],
-                zIndex: 10, // above tab bar
+                zIndex: 10,  
               }}>
                 <Pressable
                   onPress={handlePress}
