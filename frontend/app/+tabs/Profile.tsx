@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Image, Modal, ScrollView } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { QrCode, HelpCircle, Info, LogOut, Plus, XCircle, User2Icon } from "lucide-react-native";
+import { QrCode, HelpCircle, Info, LogOut, Plus, XCircle, User2Icon, ArrowLeft } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../+auth/context/authContext";
 import { Profilestyles } from "@/styles/ProfileStyle";
@@ -141,7 +141,7 @@ export default function ProfileScreen() {
       
       <Modal
         animationType="slide"
-        transparent={true} 
+        transparent={false} 
         visible={modalVisible}
         onRequestClose={closeModal}
       >
@@ -149,52 +149,59 @@ export default function ProfileScreen() {
         <View
           style={{
             flex: 1,
-            justifyContent: 'flex-end',
+            backgroundColor: '#8B5E3C',  
           }}
         >
-          
-          <View
-            style={{
-              backgroundColor: '#8B5E3C',
-              borderTopLeftRadius: 25,
-              borderTopRightRadius: 25,
-              paddingVertical: 20,
-              paddingHorizontal: 20,
-              maxHeight: '80%',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: -3 },
-              shadowOpacity: 0.5,
-              shadowRadius: 5,
-              elevation: 20,
-            }}
-          >
+        
             {/* Header */}
             <View
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginBottom: 15,
+                backgroundColor: '#704328',
+                paddingTop: 20,
+                paddingHorizontal: 20,
+                paddingBottom: 15,
+                borderBottomWidth: 1,
+                elevation: 8,
+                shadowColor: '#000',
+                shadowOffset: {width: 0, height: 2},
+                shadowOpacity: 0.3,
+                shadowRadius: 3
               }}
             >
-              <Text style={{ fontSize: 22, fontWeight: '700', color: '#ffffffff' }}>
+
+              <TouchableOpacity onPress={closeModal}>
+                <ArrowLeft size={23} color="#ffffffff" />
+              </TouchableOpacity>
+
+              <Text style={{ 
+                fontSize: 22, 
+                fontWeight: '700',
+                color: '#ffffffff', 
+                textAlign: 'center',
+                flex: 1,
+                marginLeft: 20
+              }}>
                 {modalType === 'qr'
                   ? `${user?.name} QR Code`
                   : modalType === 'support'
                   ? ''
                   : ''}
               </Text>
-              <TouchableOpacity onPress={closeModal}>
-                <XCircle size={23} color="#ffffffff" />
-              </TouchableOpacity>
+
+              <View style={{ width: 26 }}/>
+
             </View>
 
             {/* Content */}
             <ScrollView
               contentContainerStyle={{
-                paddingBottom: 40,
+                flex: 1,
+                paddingHorizontal: 20,
+                paddingVertical: 45
               }}
-              showsVerticalScrollIndicator={false}
             >
               {modalType === 'qr' && (
                 <View
@@ -235,6 +242,7 @@ export default function ProfileScreen() {
                     elevation: 5,
                   }}
                 >
+                  
                   <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color: '#7a4a06ff', textAlign: 'center' }}>
                     Support of E-Signie
                   </Text>
@@ -274,7 +282,6 @@ export default function ProfileScreen() {
             </ScrollView>
             
           </View>
-        </View>
 
       </Modal>
    

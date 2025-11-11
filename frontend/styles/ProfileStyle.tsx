@@ -111,7 +111,7 @@ export const Profilestyles = StyleSheet.create({
   menuCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#c17a37ff",
+    backgroundColor: "#ab7542ff",
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 18,
