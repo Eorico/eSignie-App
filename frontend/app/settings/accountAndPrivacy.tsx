@@ -20,12 +20,13 @@ export default function AccountAndPrivacy() {
           <ArrowLeft color="#F5F5F0" size={25} />
         </Pressable>
         <Text style={styles.headerTitle}>Account & Privacy</Text>
-        <View style={{ width: 25 }} /> {/* Spacer for alignment */}
+        <View style={{ width: 25 }}></View> {/* Spacer for alignment */}
       </View>
 
       {/* Options */}
       <ScrollView contentContainerStyle={styles.scroll}>
         {options.map((item, index) => {
+          console.log('Render', item.title)
           const Icon = item.icon;
           return (
             <Pressable key={index} style={styles.option} onPress={item.onPress}>

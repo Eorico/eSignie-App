@@ -1,8 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Party, Agreement, AgreementWithParties } from './interFace';
+import { Party, Agreement} from './interFace';
 
 const AGREEMENTS_KEY = '@agreements';
 const PARTIES_KEY = '@parties';
+
+// object na inherited ung agreement
+export interface AgreementWithParties extends Agreement {
+  parties: Party[];
+}
 
 // id generator
 const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;

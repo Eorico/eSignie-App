@@ -3,14 +3,17 @@ import { View, Text, Pressable, StyleSheet, ScrollView, Alert } from "react-nati
 import { useRouter } from "expo-router";
 import { ArrowLeft, Moon, Shield, Trash2, Globe, Bell, History } from "lucide-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from "react-i18next";
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const AGREEMENTS_KEY = '@agreements';
+  const { t } = useTranslation();
 
   // ✅ Clear Storage function
   const clearAppStorage = () => {
     Alert.alert(
-      "Clear Storage?",
+      t('clear_storage_alert_title'),
       "This will delete all locally saved data. You can’t undo this action.",
       [
         { text: "Cancel", style: "cancel" },
@@ -19,7 +22,7 @@ export default function SettingsScreen() {
           style: "destructive",
           onPress: async () => {
             try {
-              await AsyncStorage.clear();
+              await AsyncStorage.removeItem(AGREEMENTS_KEY);
               Alert.alert("Storage Cleared", "All data has been removed.");
             } catch (error) {
               Alert.alert("Error", "Something went wrong while clearing storage.");
@@ -34,7 +37,7 @@ export default function SettingsScreen() {
   const settingsOptions = [
     { title: "Dark Mode / Light Mode", icon: Moon },
     { title: "Account & Privacy", icon: Shield, onPress: () => router.push("./accountAndPrivacy") },
-    { title: "Language", icon: Globe },
+    { title: "Language", icon: Globe}, //nikki: lalagyan ng onpress na maglalabas ng popup na may options ng fil o eng
     { title: "Notification Permission", icon: Bell },
     { title: "Login History", icon: History },
     { title: "Clear Storage", icon: Trash2, onPress: clearAppStorage }, // ✅ only one clear storage

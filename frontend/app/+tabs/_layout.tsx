@@ -1,8 +1,8 @@
 import { useRouter } from "expo-router";
 import { Tabs } from "expo-router";
-import { List, User, Bell, XCircle, Settings,PlusCircle } from "lucide-react-native"; 
+import { List, User, Bell, XCircle, Settings } from "lucide-react-native"; 
 import { useRef, useState } from "react";
-import { Modal, Pressable, GestureResponderEvent, Text, StyleSheet, View, Animated} from "react-native";
+import { Modal, Pressable, GestureResponderEvent, Text, StyleSheet, View, Animated, Image} from "react-native";
 import { useAuth } from "../+auth/context/authContext";
 
 export default function TabLayout() {
@@ -18,7 +18,23 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: true,
-        headerTitle: "E-Signie",
+        headerTitle: () => (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image
+              source={require('../../assets/images/capybaraIcon.png')}
+              style={{ 
+                width: 38, 
+                height: 38, 
+                marginRight: 8,
+                borderRadius: 20
+               }}
+              resizeMode="contain"
+            />
+            <Text style={{ color: '#F5F5F0', fontSize: 22, fontWeight: 'bold' }}>
+              E-Signie
+            </Text>
+          </View>
+        ),
         tabBarActiveTintColor: "#fedfb4ff",
         tabBarInactiveTintColor: "#F5F5F0",
         tabBarStyle: {

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Home, Briefcase, FileEdit, HomeIcon, CheckSquare, Info, ChevronRightCircle } from 'lucide-react-native';
+import { Building2Icon, Briefcase, PiggyBank, ScrollTextIcon, CheckSquare, Info, ChevronRightCircle, Handshake, Plus } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 
 type AgreementType = 'rental' | 'employment' | 'buyAndsale' | 'nDa' | 'ParterShip' | 'custom'
@@ -17,7 +17,7 @@ export default function SelectAgreement () {
             id: 'rental' as AgreementType,
             title: 'Rental Agreement',
             description: 'For propert rental or lease agreements.',
-            icon: Home
+            icon: Building2Icon
         },
         {
             id: 'employment' as AgreementType,
@@ -29,25 +29,25 @@ export default function SelectAgreement () {
             id: 'buyAndsale' as AgreementType,
             title: 'Buy and Sale Agreement',
             description: 'For purchasing and selling goods or services.',
-            icon: FileEdit
+            icon: PiggyBank
         },
         {
             id: 'PartnerShip' as AgreementType,
             title: 'Partnership Agreement',
             description: 'To outline terms between business partners.',
-            icon: HomeIcon
+            icon: Handshake
         },
         {
             id: 'nDa' as AgreementType,
             title: 'Non-Disclosure Agreement',
             description: 'To protect confidential information between parties.',
-            icon: Briefcase
+            icon: ScrollTextIcon
         },
         {
             id: 'custom' as AgreementType,
             title: 'Custom Agreement',
             description: 'Create a personalized agreement from scratch.',
-            icon: FileEdit
+            icon: Plus
         },
     ]
 
@@ -156,7 +156,7 @@ export default function SelectAgreement () {
                     activeOpacity={0.8}
                 >
                     <View style={Selectstyles.iconContainer}>
-                        <IconComponent size={48} color={"#5B5FED"} strokeWidth={2}/>
+                        <IconComponent size={48} color={"#632402c8"} strokeWidth={2}/>
                     </View>
                     <Text style={Selectstyles.cardTitle}>{type.title}</Text>
                     <Text style={Selectstyles.cardDescription}>{type.description}</Text>
@@ -247,7 +247,7 @@ const Selectstyles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 20,
     padding: 20,
     width: 400,
     height: 400,

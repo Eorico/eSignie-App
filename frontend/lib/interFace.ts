@@ -23,13 +23,9 @@ export interface Party {
 }
 
 export interface Witness extends Party {
-
+  
 }
 
-// object na inherited ung agreement
-export interface AgreementWithParties extends Agreement {
-  parties: Party[];
-}
 
 // object inteface ng party inputs
 export interface PartyInput {
