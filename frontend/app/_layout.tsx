@@ -1,4 +1,4 @@
-import './src/lib/language';
+import '@/lib/language';
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
