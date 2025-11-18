@@ -1,3 +1,4 @@
+import React from "react";
 import { View, Text, TouchableOpacity, Image, Modal, ScrollView } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { QrCode, HelpCircle, Info, LogOut, Plus, XCircle, User2Icon, ArrowLeft } from "lucide-react-native";
@@ -6,14 +7,26 @@ import { useAuth } from "../+auth/context/authContext";
 import { Profilestyles } from "@/styles/ProfileStyle";
 import { useState } from "react";
 import QRCode from 'react-native-qrcode-svg';
+import i18n from "@/lib/language";
+import { useTranslation } from "react-i18next";
+import 'i18next';
+
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const [profileImage, setProfileImage] = useState<string | null>(null);
-
+  const { t } = useTranslation();
   const [modalVisible, setmodalVisible] = useState(false);
+  const [languageModal, setLanguageModal] = useState(false);
   const [modalType, setmodalType] = useState<'qr'| 'support' | 'about' | null>(null);
+
+  // Force re-render when language changes
+  const [, forceUpdate] = React.useState(false);
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
+    setLanguageModal(false);
+  };
 
   const handleImagePick = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -54,6 +67,8 @@ export default function ProfileScreen() {
     setmodalType(null);
   }
 
+
+
   return (
     <View style={Profilestyles.container}>
       {/* Profile Section */}
@@ -81,21 +96,21 @@ export default function ProfileScreen() {
             <View style={Profilestyles.statBox}>
 
               <Text style={Profilestyles.statNumber}>0</Text>
-              <Text style={Profilestyles.statLabel}>Drafts</Text>
+              <Text style={Profilestyles.statLabel}>{t('profile.drafts')}</Text>
               
             </View>
 
             <View style={Profilestyles.statBox}>
 
               <Text style={Profilestyles.statNumber}>0</Text>
-              <Text style={Profilestyles.statLabel}>Completed</Text>
+              <Text style={Profilestyles.statLabel}>{t('profile.completed')}</Text>
               
             </View>
 
             <View style={Profilestyles.statBox}>
 
               <Text style={Profilestyles.statNumber}>0</Text>
-              <Text style={Profilestyles.statLabel}>Created</Text>
+              <Text style={Profilestyles.statLabel}>{t('profile.created')}</Text>
 
             </View>
           </View>
@@ -112,7 +127,7 @@ export default function ProfileScreen() {
           onPress={() => openModal('qr')}
           >
           <QrCode color="#f5d9b2ff" size={25} />
-          <Text style={Profilestyles.menuText}>QR Code</Text>
+          <Text style={Profilestyles.menuText}>{t('profile.QRcode')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -121,7 +136,7 @@ export default function ProfileScreen() {
           onPress={() => openModal('support')}
           >
           <HelpCircle color="#f5d9b2ff" size={25} />
-          <Text style={Profilestyles.menuText}>Support of E-Signie</Text>
+          <Text style={Profilestyles.menuText}>{t('profile.support')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -130,12 +145,12 @@ export default function ProfileScreen() {
           onPress={() => openModal('about')}
           >
           <Info color="#f5d9b2ff" size={25} />
-          <Text style={Profilestyles.menuText}>About E-Signie</Text>
+          <Text style={Profilestyles.menuText}>{t('profile.about')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[Profilestyles.menuCard, Profilestyles.logoutCard]} onPress={handleLogout} activeOpacity={0.8}>
           <LogOut color="#f5e5dbff" size={25} />
-          <Text style={[Profilestyles.menuText, {color: 'white'}]}>Logout</Text>
+          <Text style={[Profilestyles.menuText, {color: 'white'}]}>{t('profile.logout')}</Text>
         </TouchableOpacity>
       </View>
       

@@ -1,16 +1,7 @@
 import { Platform } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import * as Print from 'expo-print';
-
-
-// generated pdf converter
-interface Party {
-  name: string;
-  role: string;
-  id_number: string;
-  signature_url?: string;
-  signed_at?: string;
-}
+import { Party } from '../interFace';
 
 interface Agreement {
   id: string | number;

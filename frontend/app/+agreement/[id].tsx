@@ -7,11 +7,11 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import { useLocalSearchParams, useRouter, Stack, useNavigation } from 'expo-router';
-import { Trash2, Edit, FileText, Share } from 'lucide-react-native';
-import { agreementStorage, partyStorage, type AgreementWithParties } from '@/lib/LocalStorage';
+import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
+import { Trash2, Edit, Share } from 'lucide-react-native';
+import { agreementStorage, partyStorage, witnessStorage, type AgreementWithPartiesAndWitness } from '@/lib/LocalStorage';
 import SignatureModal from '@/components/ui/SignatureModal';
-import { generatePDF } from '@/utils/pdfGenerator';
+import { generatePDF } from '@/lib/utils/pdfGenerator';
 import { CreatedAgreementstyles } from '@/styles/Created_Agreement_Design';
 
 // ito ung agreement details 
@@ -21,7 +21,7 @@ export default function AgreementDetail() {
   const router = useRouter();
 
   // inherited agreement 
-  const [agreement, setAgreement] = useState<AgreementWithParties | null>(null);
+  const [agreementData, setAgreementData] = useState<AgreementWithPartiesAndWitness | null>(null);
 
   // loading
   const [loading, setLoading] = useState(true);
@@ -30,6 +30,8 @@ export default function AgreementDetail() {
   // signature 
   const [signatureModalVisible, setSignatureModalVisible] = useState(false);
   const [selectedPartyId, setSelectedPartyId] = useState<string | null>(null);
+  const [selectedWitnessId, setSelectedWitnessId] = useState<string | null>(null);
+  const [isSignWitness, setIsSignWitness] = useState(false);
 
   const nav = useNavigation();
 
@@ -68,7 +70,8 @@ export default function AgreementDetail() {
         return;
       }
 
-      setAgreement(agreementData);
+      setAgreementData(agreementData);
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load agreement');
     } finally {
@@ -103,42 +106,61 @@ export default function AgreementDetail() {
   };
 
   // dito ung pag maglalagay na ng pirma
-  const handleSign = (partyId: string) => {
+  const partySign = (partyId: string) => {
     setSelectedPartyId(partyId);
+    setSelectedWitnessId(null);
+    setIsSignWitness(false);
     setSignatureModalVisible(true);
   };
 
-  const handleSaveSignature = async (signature: string) => {
-    if (!selectedPartyId) return;
+  const witnessSign = (witnessId: string) => {
+    setSelectedWitnessId(witnessId);
+    setSelectedPartyId(null);
+    setIsSignWitness(true);
+    setSignatureModalVisible(true);
+  }
 
-    try {
+  const handleSaveSignature = async (signature: string) => {
+   try {
+    if (selectedPartyId && !isSignWitness) {
       await partyStorage.update(selectedPartyId, {
         signature_url: signature,
         signed_at: new Date().toISOString(),
       });
+    } else if (selectedWitnessId && isSignWitness) {
+      await witnessStorage.update(selectedWitnessId, {
+        signature_url: signature,
+        signed_at: new Date().toISOString(),
+      });
+    }
 
-      const allPartiesSigned = agreement?.parties.every(
-        (p) => p.id === selectedPartyId || p.signature_url
-      );
-
+    if (agreementData) {
+      const allPartiesSigned = agreementData.parties.every(p => p.signature_url);
       if (allPartiesSigned) {
         await agreementStorage.update(id as string, { status: 'completed' });
       }
-
-      fetchAgreementDetails();
-    } catch (err) {
-      Alert.alert(
-        'Error',
-        err instanceof Error ? err.message : 'Failed to save signature'
-      );
     }
+
+    fetchAgreementDetails();
+   } catch (error) {
+    Alert.alert(
+      "Error", 
+      error instanceof Error ? error.message : "Failed to save signature"
+    );
+   } finally {
+    setSignatureModalVisible(false);
+    setSelectedPartyId(null);
+    setSelectedWitnessId(null);
+    setIsSignWitness(false);
+   }
   };
 
   const handleExportPDF = async () => {
-    if (!agreement) return;
+    if (!agreementData) return;
 
     try {
-      await generatePDF(agreement);
+      const filename = 
+      await generatePDF(agreementData);
     } catch (err) {
       Alert.alert(
         'Error',
@@ -177,7 +199,7 @@ export default function AgreementDetail() {
     );
   }
 
-  if (error || !agreement) {
+  if (error || !agreementData) {
     return (
       <View style={CreatedAgreementstyles.centerContainer}>
         <Text style={CreatedAgreementstyles.errorText}>{error || 'Agreement not found'}</Text>
@@ -199,26 +221,26 @@ export default function AgreementDetail() {
         <View style={CreatedAgreementstyles.content}>
           <View style={CreatedAgreementstyles.header}>
             <View style={CreatedAgreementstyles.headerTop}>
-              <Text style={CreatedAgreementstyles.title}>{agreement.title}</Text>
+              <Text style={CreatedAgreementstyles.title}>{agreementData.title}</Text>
               <View
                 style={[
                   CreatedAgreementstyles.statusBadge,
-                  { backgroundColor: `${getStatusColor(agreement.status)}20` },
+                  { backgroundColor: `${getStatusColor(agreementData.status)}20` },
                 ]}
               >
                 <Text
                   style={[
                     CreatedAgreementstyles.statusText,
-                    { color: getStatusColor(agreement.status) },
+                    { color: getStatusColor(agreementData.status) },
                   ]}
                 >
-                  {agreement.status.charAt(0).toUpperCase() +
-                    agreement.status.slice(1)}
+                  {agreementData.status.charAt(0).toUpperCase() +
+                    agreementData.status.slice(1)}
                 </Text>
               </View>
             </View>
             <Text style={CreatedAgreementstyles.date}>
-              Created: {formatDate(agreement.created_at)}
+              Created: {formatDate(agreementData.created_at)}
             </Text>
           </View>
 
@@ -242,44 +264,47 @@ export default function AgreementDetail() {
           <View style={CreatedAgreementstyles.section}>
             <Text style={CreatedAgreementstyles.sectionTitle}>Terms and Conditions</Text>
             <View style={CreatedAgreementstyles.termsContainer}>
-              <Text style={CreatedAgreementstyles.termsText}>{agreement.terms}</Text>
+              <Text style={CreatedAgreementstyles.termsText}>{agreementData.terms}</Text>
             </View>
           </View>
 
           <View style={CreatedAgreementstyles.section}>
+
             <Text style={CreatedAgreementstyles.sectionTitle}>Parties</Text>
-            {agreement.parties.map((party, index) => (
-              <View key={party.id} style={CreatedAgreementstyles.partyCard}>
+            {agreementData.parties.map((person) => (
+              <View key={person.id} style={CreatedAgreementstyles.partyCard}>
                 <View style={CreatedAgreementstyles.partyHeader}>
                   <Text style={CreatedAgreementstyles.partyTitle}>
-                    {party.name} - {party.role}
+                    {person.name} - {person.role}
                   </Text>
-                  {party.signed_at && (
+                  {person.signed_at && (
                     <Text style={CreatedAgreementstyles.signedText}>✓ Signed</Text>
                   )}
                 </View>
 
                 <View style={CreatedAgreementstyles.partyInfo}>
                   <Text style={CreatedAgreementstyles.partyLabel}>ID Number</Text>
-                  <Text style={CreatedAgreementstyles.partyValue}>{party.id_number}</Text>
+                  <Text style={CreatedAgreementstyles.partyValue}>{person.id_number}</Text>
+                  <Text style={CreatedAgreementstyles.partyValue}>{person.address}</Text>
+                  <Text style={CreatedAgreementstyles.partyValue}>{person.idType}</Text>
                 </View>
 
-                {party.signature_url ? (
+                {person.signature_url ? (
                   <View style={CreatedAgreementstyles.signatureContainer}>
                     <Text style={CreatedAgreementstyles.partyLabel}>Signature</Text>
                     <Image
-                      source={{ uri: party.signature_url }}
+                      source={{ uri: person.signature_url }}
                       style={CreatedAgreementstyles.signatureImage}
                       resizeMode="contain"
                     />
                     <Text style={CreatedAgreementstyles.signedDate}>
-                      Signed: {formatDate(party.signed_at!)}
+                      Signed: {formatDate(person.signed_at!)}
                     </Text>
                   </View>
                 ) : (
                   <TouchableOpacity
                     style={CreatedAgreementstyles.signButton}
-                    onPress={() => handleSign(party.id)}
+                    onPress={() => partySign(person.id)}
                   >
                     <Edit size={16} color="#ffffff" />
                     <Text style={CreatedAgreementstyles.signButtonText}>Add Signature</Text>
@@ -287,6 +312,63 @@ export default function AgreementDetail() {
                 )}
               </View>
             ))}
+
+          </View>
+
+          <View style={CreatedAgreementstyles.section}>
+
+            <Text style={CreatedAgreementstyles.sectionTitle}>Witness</Text>
+            {agreementData.witnesses && agreementData.witnesses.length > 0 ? (
+              agreementData.witnesses.map((witness) => (
+                <View key={witness.id} style={CreatedAgreementstyles.partyCard}>
+                  <View style={CreatedAgreementstyles.partyHeader}>
+                    <Text style={CreatedAgreementstyles.partyTitle}>
+                      {witness.name} - {witness.role}
+                    </Text>
+                    {witness.signed_at && (
+                      <Text style={CreatedAgreementstyles.signedText}>✓ Signed</Text>
+                    )}
+                  </View>
+
+                  <View style={CreatedAgreementstyles.partyInfo}>
+                    <Text style={CreatedAgreementstyles.partyLabel}>ID Number</Text>
+                    <Text style={CreatedAgreementstyles.partyValue}>{witness.id_number}</Text>
+                    <Text style={CreatedAgreementstyles.partyValue}>{witness.address}</Text>
+                    <Text style={CreatedAgreementstyles.partyValue}>{witness.idType}</Text>
+                  </View>
+
+                  {witness.signature_url ? (
+                    <View style={CreatedAgreementstyles.signatureContainer}>
+                      <Text style={CreatedAgreementstyles.partyLabel}>Signature</Text>
+                      <Image
+                        source={{ uri: witness.signature_url }}
+                        style={CreatedAgreementstyles.signatureImage}
+                        resizeMode="contain"
+                      />
+                      <Text style={CreatedAgreementstyles.signedDate}>
+                        Signed: {formatDate(witness.signed_at!)}
+                      </Text>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      style={CreatedAgreementstyles.signButton}
+                      onPress={() => witnessSign(witness.id)}
+                    >
+                      <Edit size={16} color="#ffffff" />
+                      <Text style={CreatedAgreementstyles.signButtonText}>Add Signature</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ))
+              ) : (
+                <View>
+                  <Text>
+                    No witness added to this agreement
+                  </Text>
+                </View>
+              )
+            }
+
           </View>
         </View>
       </ScrollView>
@@ -296,10 +378,13 @@ export default function AgreementDetail() {
         onClose={() => {
           setSignatureModalVisible(false);
           setSelectedPartyId(null);
+          setSelectedWitnessId(null);
+          setIsSignWitness(false)
         }}
         onSave={handleSaveSignature}
         partyName={
-          agreement.parties.find((p) => p.id === selectedPartyId)?.name || ''
+          isSignWitness ? agreementData.witnesses?.find((w) => w.id === selectedWitnessId)?.name || 'Witness'
+          : agreementData.parties.find((p) => p.id === selectedPartyId)?.name || 'Party'
         }
       />
     </>

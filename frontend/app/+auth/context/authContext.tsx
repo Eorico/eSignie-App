@@ -1,24 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { agreementStorage } from "@/lib/LocalStorage";
-
-// para syang .kt sa android studio
-
-// for user inputs
-interface User {
-    email: string;
-    name: string;
-}
-
-// for authentication process
-interface AuthContextType {
-    user: User | null;
-    loading: boolean;
-    login: (email: string, password: string) => Promise<{ success: boolean, error?: string }>;
-    signUp: (email: string, password: string, name: string) => Promise<{ success: boolean, error?: string }>;
-    signOut: () => Promise<void>;
-    resetPassword: (email: string) => Promise<{ success: boolean, error?: string }>;
-}
+import { User, AuthContextType } from "@/lib/interFace";
 
 // instace of authContextType
 const authContext = createContext<AuthContextType | undefined>(undefined);

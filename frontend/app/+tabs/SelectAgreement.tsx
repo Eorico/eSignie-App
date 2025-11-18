@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Building2Icon, Briefcase, PiggyBank, ScrollTextIcon, CheckSquare, Info, ChevronRightCircle, Handshake, Plus } from 'lucide-react-native';
+import { CheckSquare, Info, ChevronRightCircle  } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 
-type AgreementType = 'rental' | 'employment' | 'buyAndsale' | 'nDa' | 'ParterShip' | 'custom'
+export type AgreementType = 'rental' | 'employment' | 'buyAndsale' | 'nDa' | 'ParterShip' | 'custom'
 
 export default function SelectAgreement () {
     const router = useRouter();
@@ -17,43 +17,46 @@ export default function SelectAgreement () {
             id: 'rental' as AgreementType,
             title: 'Rental Agreement',
             description: 'For propert rental or lease agreements.',
-            icon: Building2Icon
+            img: require("../../assets/images/Rental.png")
         },
         {
             id: 'employment' as AgreementType,
             title: 'Employment Agreement',
             description: 'For hiring employees and contractors.',
-            icon: Briefcase
+            img: require("../../assets/images/Employment.png")
         },
         {
             id: 'buyAndsale' as AgreementType,
             title: 'Buy and Sale Agreement',
             description: 'For purchasing and selling goods or services.',
-            icon: PiggyBank
+            img: require("../../assets/images/BuyAndSale.png")
         },
         {
             id: 'PartnerShip' as AgreementType,
             title: 'Partnership Agreement',
             description: 'To outline terms between business partners.',
-            icon: Handshake
+            img: require("../../assets/images/Partnership.png")
         },
         {
             id: 'nDa' as AgreementType,
             title: 'Non-Disclosure Agreement',
             description: 'To protect confidential information between parties.',
-            icon: ScrollTextIcon
+            img: require("../../assets/images/NonDisclosure.png")
         },
         {
             id: 'custom' as AgreementType,
             title: 'Custom Agreement',
             description: 'Create a personalized agreement from scratch.',
-            icon: Plus
+            img: require("../../assets/images/custom.png")
         },
     ]
 
     const handleSelectType = (type: AgreementType) => {
-        setSelectedType(type);
-        router.push(`../+createAgreement/CreateAgreement?type=${type}`)
+        setSelectedType(selectedType);
+        router.push({
+          pathname:`../+createAgreement/CreateAgreement`,
+          params: { type },
+        })
     };
 
     useEffect(() => {
@@ -147,7 +150,7 @@ export default function SelectAgreement () {
       >
 
         {agreementObjects.map((type) => {
-            const IconComponent = type.icon;
+            const Img = type.img;
             return (
                 <TouchableOpacity
                     key={type.id}
@@ -156,7 +159,10 @@ export default function SelectAgreement () {
                     activeOpacity={0.8}
                 >
                     <View style={Selectstyles.iconContainer}>
-                        <IconComponent size={48} color={"#632402c8"} strokeWidth={2}/>
+                        <Image 
+                          source={Img}
+                          style={{ width: 180, height: 180, marginTop: 12, borderRadius: 12 }}
+                        />
                     </View>
                     <Text style={Selectstyles.cardTitle}>{type.title}</Text>
                     <Text style={Selectstyles.cardDescription}>{type.description}</Text>
@@ -231,7 +237,7 @@ const Selectstyles = StyleSheet.create({
     marginBottom: 30,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: '600',
     color: '#632402ff',
     textAlign: 'center',
@@ -246,32 +252,35 @@ const Selectstyles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   card: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#fcf4f0ff',
+    borderWidth: 1,
+    borderColor: '#632402ff',
     borderRadius: 20,
     padding: 20,
-    width: 400,
-    height: 400,
+    width: 380,
+    height: 380,
     marginRight: 16,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 5,
+    marginTop: 10
   },
   iconContainer: {
     marginBottom: 16,
   },
   cardTitle: {
-    fontSize: 18,
+    fontSize: 25,
     fontWeight: '600',
-    color: '#2D3142',
+    color: '#61361eff',
     marginBottom: 8,
     textAlign: 'center',
   },
   cardDescription: {
     fontSize: 14,
-    color: '#6B7280',
+    color: '#61361eff',
     textAlign: 'center',
   },
 });

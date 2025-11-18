@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { FileText, ChevronRight } from 'lucide-react-native';
-import { agreementStorage, type AgreementWithParties } from '@/lib/LocalStorage';
+import { agreementStorage, type AgreementWithPartiesAndWitness } from '@/lib/LocalStorage';
 import { Agreementstyles } from '@/styles/Agreement_Design';
 import { useAuth } from '../+auth/context/authContext';
 
@@ -17,7 +17,7 @@ import { useAuth } from '../+auth/context/authContext';
 export default function Agreements() {
   // logics
   const router = useRouter();
-  const [agreements, setAgreements] = useState<AgreementWithParties[]>([]);
+  const [agreements, setAgreements] = useState<AgreementWithPartiesAndWitness[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +37,7 @@ export default function Agreements() {
       );
 
       // Fetch full agreements with parties
-      const agreementsWithParties: AgreementWithParties[] = await Promise.all(
+      const agreementsWithParties: AgreementWithPartiesAndWitness[] = await Promise.all(
         userAgreementsData.map(async (agreement) => {
           const fullAgreement = await agreementStorage.getById(agreement.id);
           return fullAgreement!;
@@ -94,7 +94,7 @@ export default function Agreements() {
   };
 
   // rendering of agreement
-  const renderAgreementItem = ({ item }: { item: AgreementWithParties }) => (
+  const renderAgreementItem = ({ item }: { item: AgreementWithPartiesAndWitness }) => (
     <TouchableOpacity
       style={Agreementstyles.agreementCard}
       onPress={() => router.push(`/+agreement/${item.id}`)}

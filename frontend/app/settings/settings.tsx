@@ -3,6 +3,7 @@ import { View, Text, Pressable, StyleSheet, ScrollView, Alert, Modal } from "rea
 import { useRouter } from "expo-router";
 import { ArrowLeft, Moon, Shield, Trash2, Globe, Bell, History } from "lucide-react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/language";
 
@@ -11,7 +12,7 @@ export default function SettingsScreen() {
   const { t } = useTranslation();
   const AGREEMENTS_KEY = '@agreements';
 
-  const [languageModal, setLanguageModal] = React.useState(false);
+  const [languageModal, setLanguageModal] = useState(false);
 
   // Force re-render when language changes
   const [, forceUpdate] = React.useState(false);

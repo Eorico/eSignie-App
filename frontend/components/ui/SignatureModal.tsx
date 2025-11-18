@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -25,7 +25,20 @@ export default function SignatureModal({
 }: SignatureModalProps) {
   const signatureRef = useRef<any>(null);
   const [hasSignature, setHasSignature] = useState(false);
-  const [tempSignature, setTempSignature] = useState<string | null>(null); // store temp signature
+  const [tempSignature, setTempSignature] = useState<string | null>(null); 
+  const [dateWaterMark, setdateWaterMark] = useState('');
+
+  useEffect(() => {
+    if (visible) {
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      setdateWaterMark(formattedDate);
+    }
+  }, [visible]);
 
   const handleOK = (signature: string) => {
     setTempSignature(signature);
@@ -52,7 +65,7 @@ export default function SignatureModal({
 
   const handleSave = () => {
     if (tempSignature) {
-      onSave(tempSignature); // save only when user clicks Save
+      onSave(tempSignature);  
       setTempSignature(null);
       setHasSignature(false);
       onClose();
@@ -64,7 +77,49 @@ export default function SignatureModal({
     onClose();
   };
 
-  const style = `.m-signature-pad--footer {display: none; margin: 0px;}`;
+  const style = `
+    .m-signature-pad {
+      box-shadow: none;
+      border: 2px dashed #632402;
+      border-radius: 12px;
+      background-color: #fafafa;
+      height: 575px;
+      width: 100%;
+    }
+
+    .m-signature-pad--body {
+      border: none;
+      height: 575px;
+      position: relative;
+    }
+
+    .m-signature-pad--body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .m-signature-pad--body canvas {
+      border-radius: 8px;
+      background-color: transparent;
+      position: relative;
+      z-index: 2;
+    }
+
+    .m-signature-pad--footer {
+      display: none;
+      margin: 0px;
+    }
+
+    body {
+      background-color: transparent;
+    }
+  `;
 
   // xml
   return (
@@ -96,7 +151,9 @@ export default function SignatureModal({
             confirmText="Save"
             webStyle={style}
             autoClear={false}
+            penColor="#000000"
             imageType="image/png"
+            backgroundColor="rgba(255,255,255,0.01)"
           />
         </View>
 

@@ -118,6 +118,7 @@ export const CreatedAgreementstyles = StyleSheet.create({
     fontSize: 15,
     color: "#374151",
     lineHeight: 22,
+    textAlign: 'center'
   },
 
   partyCard: {

@@ -1,3 +1,21 @@
+// para syang .kt sa android studio
+
+// for user inputs
+export interface User {
+    email: string;
+    name: string;
+}
+
+// for authentication process
+export interface AuthContextType {
+    user: User | null;
+    loading: boolean;
+    login: (email: string, password: string) => Promise<{ success: boolean, error?: string }>;
+    signUp: (email: string, password: string, name: string) => Promise<{ success: boolean, error?: string }>;
+    signOut: () => Promise<void>;
+    resetPassword: (email: string) => Promise<{ success: boolean, error?: string }>;
+}
+
 // object agreement
 export interface Agreement {
   id: string;
@@ -15,6 +33,8 @@ export interface Party {
   agreement_id: string;
   name: string;
   role: string;
+  address: string;
+  idType: string;
   id_number: string;
   id_photo_url?: string;
   signature_url?: string;
@@ -23,9 +43,8 @@ export interface Party {
 }
 
 export interface Witness extends Party {
-  
+  testimony: string;
 }
-
 
 // object inteface ng party inputs
 export interface PartyInput {

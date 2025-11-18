@@ -20,8 +20,62 @@ const eng={
         storage_clear_message: "All data has been removed",
         error: "Error occured",
         error_message: "There was a problem while clearing storage",
-        
     },
+
+    profile: {
+      drafts: "Drafts",
+      completed: "Completed",
+      created: "Created",
+      QRcode: "QRCode",
+      support: "Support of E-Signie",
+      about: "About E-Signie",
+      logout: "Logout",
+    },
+
+    selectAgreement: {
+      title: "Choose Agreement Type",
+      titleSubtext1: "Create legally binding agreements online",
+      titleSubtext2: "Follow this steps:",
+      step1: "Select",
+      step2: "Details",
+      step3: "Preview",
+      titleType: "Select Agreement Type",
+      rental: "Rental Agreement",
+      rentalSubtext: "For property rental or lease agreement.",
+      employment: "Employment Agreement",
+      employmentSubtext: "For hiring employees and contractors.",
+      BandA: "Buy and Sale Agreement",
+      BandAsubtext: "For purchasing and selling goods or services.",
+      partnerShip: "Partnership Agreement",
+      partnerShipSubtext: "To outline terms between bussiness partners.",
+      NandA: "Non-Disclosure Agreement",
+      NandAsubtext: "To protect confidential information between parties.",
+      custom: "Custom Agreement",
+      customSubtext: "Create a personalized agreement from scratch."
+    },
+
+    createAgreement: {
+      title: "TITLE",
+      TnC: "TERMS AND CONDITIONS",
+      PandW: "PARTY'S AND WITNESSES",
+      party: "Party",
+      witness: "Witness",
+      uploadBtn: "Upload ID",
+      addPartyBtn: "Add Party"
+    },
+
+    viewAgreement: {
+
+    },
+
+    notification: {
+
+    },
+
+    logo: {
+
+    }
+    
 }
 
 const fil={
@@ -42,8 +96,37 @@ const fil={
         error: "Mayroong error na humadlang",
         error_message: "Nagkaroon ng error habang naglilinis ng iyong storage",
         
+    },
+  
+    profile: {
+      drafts: "Mga Drafts",
+      completed: "Nakumpleto",
+      created: "Nagawa",
+      QRcode: "I-Scan Ang QRCode",
+      support: "Suporta ng E-Signie",
+      about: "Tungkol sa E-Signie",
+      logout: "Mag-Logout",
+    },
+
+    selectAgreement: {
+
+    },
+
+    createAgreement: {
+
+    },
+
+    viewAgreement: {
+
+    },
+
+    notification: {
+
+    },
+
+    logo: {
+      
     }
-    
 
 }
 
