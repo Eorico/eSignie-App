@@ -10,6 +10,7 @@ import QRCode from 'react-native-qrcode-svg';
 import i18n from "@/lib/language";
 import { useTranslation } from "react-i18next";
 import 'i18next';
+import { useUserStat } from "../+auth/context/userStatContext";
 
 
 export default function ProfileScreen() {
@@ -21,13 +22,15 @@ export default function ProfileScreen() {
   const [languageModal, setLanguageModal] = useState(false);
   const [modalType, setmodalType] = useState<'qr'| 'support' | 'about' | null>(null);
 
+  const { userStat, setUserStat } = useUserStat();
+
   // Force re-render when language changes
   const [, forceUpdate] = React.useState(false);
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
     setLanguageModal(false);
   };
-
+  
   const handleImagePick = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -95,21 +98,20 @@ export default function ProfileScreen() {
           <View style={Profilestyles.statsRow}>
             <View style={Profilestyles.statBox}>
 
-              <Text style={Profilestyles.statNumber}>0</Text>
+              <Text style={Profilestyles.statNumber} >{userStat?.draftsAgreement}</Text>
               <Text style={Profilestyles.statLabel}>{t('profile.drafts')}</Text>
               
             </View>
 
             <View style={Profilestyles.statBox}>
 
-              <Text style={Profilestyles.statNumber}>0</Text>
+              <Text style={Profilestyles.statNumber}>{userStat?.completedAgreement}</Text>
               <Text style={Profilestyles.statLabel}>{t('profile.completed')}</Text>
               
             </View>
-
+            
             <View style={Profilestyles.statBox}>
-
-              <Text style={Profilestyles.statNumber}>0</Text>
+              <Text style={Profilestyles.statNumber}>{userStat?.createdAgreement}</Text>
               <Text style={Profilestyles.statLabel}>{t('profile.created')}</Text>
 
             </View>

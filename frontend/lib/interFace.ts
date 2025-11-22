@@ -4,6 +4,9 @@
 export interface User {
     email: string;
     name: string;
+    draftsAgreement?: number,
+    completedAgreement?: number,
+    createdAgreement: number,
 }
 
 // for authentication process
@@ -36,7 +39,7 @@ export interface Party {
   address: string;
   idType: string;
   id_number: string;
-  id_photo_url?: string;
+  id_photo_uri?: string;
   signature_url?: string;
   signed_at?: string;
   created_at: string;
@@ -53,6 +56,7 @@ export interface PartyInput {
   id_number: string;
   address: string;
   idType: string;
+  id_photo_uri?: string;
 }
 
 export interface WitnessInput extends PartyInput {

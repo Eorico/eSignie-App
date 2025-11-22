@@ -4,14 +4,16 @@ import { List, User, Bell, XCircle, Settings } from "lucide-react-native";
 import { useRef, useState } from "react";
 import { Modal, Pressable, GestureResponderEvent, Text, StyleSheet, View, Animated, Image} from "react-native";
 import { useAuth } from "../+auth/context/authContext";
+import { useNotif } from "@/lib/notification";
 
 export default function TabLayout() {
   const {user} = useAuth();
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const notif = useState<boolean>(true);
+  const { notifications, clearNotifications } = useNotif();
   const handleBellPress = (event: GestureResponderEvent) => {
     setModalVisible(true);
+    clearNotifications();
   };
 
   return (
@@ -57,7 +59,31 @@ export default function TabLayout() {
               style={{ marginRight: 15 }}
               accessibilityLabel="Notifications"
             >
-              <Bell size={24} color="#F5F5F0" style={{ marginRight: 10 }}/>
+              <View>
+                <Bell size={24} color="#F5F5F0" style={{ marginRight: 10 }}/>
+                {notifications.length > 0 && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      right: 6,
+                      top: -4,
+                      backgroundColor: 'red',
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      minWidth: 16,
+                      height: 16,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      paddingHorizontal: 3,
+                      borderColor: '#eb0000ff'
+                    }}
+                  >
+                    <Text style={{ color: 'white', fontSize: 10, fontWeight: 'bold' }}>
+                      {notifications.length}
+                    </Text>
+                  </View>
+                )}
+              </View>
             </Pressable>
 
             <Modal
@@ -80,35 +106,15 @@ export default function TabLayout() {
 
                   <View style={NotifStyle.notificationList}>
                     
-                    {notif ? (
-                      <>
-                        <View style={NotifStyle.notificationItem}>
-                        
-                        <Text style={NotifStyle.notificationText}>
-                          Document signed by John Doe
-                        </Text>
-                        <Text style={NotifStyle.timestamp}>2 mins ago</Text>
-
+                    {notifications.length > 0 ? (
+                      notifications.map((item) => (
+                        <View key={item.id} style={NotifStyle.notificationItem}>
+                          <Text style={NotifStyle.notificationText}>{item.message}</Text>
+                          <Text style={NotifStyle.timestamp}>{item.timestamp}</Text>
                         </View>
-                        <View style={NotifStyle.notificationItem}>
-
-                          <Text style={NotifStyle.notificationText}>
-                            New agreement request received
-                          </Text>
-                          <Text style={NotifStyle.timestamp}>10 mins ago</Text>
-
-                        </View>
-                        <View style={NotifStyle.notificationItem}>
-
-                          <Text style={NotifStyle.notificationText}>
-                            Signature verified successfully
-                          </Text>
-                          <Text style={NotifStyle.timestamp}>1 hour ago</Text>
-
-                        </View>
-                      </>
-                    ):(
-                      <Text style={NotifStyle.notificationText}>No new notifications</Text>
+                      ))
+                    ) : (
+                      <Text style={NotifStyle.notificationText}>No New notification</Text>
                     )}
                     
                   </View>

@@ -2,6 +2,7 @@ import { Platform } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import * as Print from 'expo-print';
 import { Party } from '../interFace';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 interface Agreement {
   id: string | number;
@@ -13,7 +14,7 @@ interface Agreement {
 }
 
 export const generatePDF = async (agreement: Agreement) => {
-  const htmlContent = generateHTML(agreement);
+  const htmlContent = await generateHTML(agreement);
 
   try {
     const { uri } = await Print.printToFileAsync({ html: htmlContent });
@@ -32,8 +33,8 @@ export const generatePDF = async (agreement: Agreement) => {
   }
 };
 
-const generateWebPDF = (agreement: Agreement) => {
-  const htmlContent = generateHTML(agreement);
+const generateWebPDF = async (agreement: Agreement) => {
+  const htmlContent = await generateHTML(agreement);
   const printWindow = window.open('', '_blank');
   if (printWindow) {
     printWindow.document.write(htmlContent);
@@ -45,7 +46,7 @@ const generateWebPDF = (agreement: Agreement) => {
   }
 };
 
-const generateHTML = (agreement: Agreement): string => {
+const generateHTML = async (agreement: Agreement): Promise<string> => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -56,31 +57,51 @@ const generateHTML = (agreement: Agreement): string => {
     });
   };
 
-  const partiesHTML = agreement.parties
-    .map(
-      (party, index) => `
-        <div style="margin-bottom: 40px; page-break-inside: avoid;">
-          <h3 style="font-size: 16px; color: #111827; margin-bottom: 10px;">Party ${index + 1}: ${party.name}</h3>
-          <p><strong>Role:</strong> ${party.role}</p>
-          <p><strong>ID Number:</strong> ${party.id_number}</p>
-          ${
-            party.signature_url
-              ? `
-              <div style="margin-top: 15px; text-align: left;">
-                <p style="margin-bottom: 5px; color: #6b7280;">Signature:</p>
-                <img src="${party.signature_url}" 
-                     style="max-width: 250px; height: auto; border: 1px solid #ccc; border-radius: 6px;" />
-                <p style="margin-top: 5px; color: #6b7280; font-size: 12px;">Signed: ${formatDate(
-                  party.signed_at!
-                )}</p>
-              </div>
-            `
-              : `<p style="color: #9ca3af;">Not yet signed</p>`
-          }
-        </div>
-      `
-    )
-    .join('');
+const getBase64FromUri = async (uri: string): Promise<string> => {
+  const result = await ImageManipulator.manipulateAsync(uri, [], { base64: true });
+  return `data:image/png;base64,${result.base64}`;
+};
+
+  const partiesHTML = await Promise.all(
+  agreement.parties.map(async (party, index) => {
+    let idPhotoBase64 = '';
+    if (party.id_photo_uri) {
+      idPhotoBase64 = await getBase64FromUri(party.id_photo_uri);
+    }
+
+    let signatureBase64 = '';
+    if (party.signature_url) {
+      signatureBase64 = await getBase64FromUri(party.signature_url);
+    }
+
+    return `
+      <div style="margin-bottom: 40px; page-break-inside: avoid;">
+        <h3>Party ${index + 1}: ${party.name}</h3>
+        <p><strong>Role:</strong> ${party.role}</p>
+        <p><strong>ID Number:</strong> ${party.id_number}</p>
+
+        ${
+          idPhotoBase64
+            ? `<div>
+                 <p>ID Photo:</p>
+                 <img src="${idPhotoBase64}" style="max-width:250px;height:auto;" />
+               </div>`
+            : ''
+        }
+
+        ${
+          signatureBase64
+            ? `<div>
+                 <p>Signature:</p>
+                 <img src="${signatureBase64}" style="max-width:250px;height:auto;" />
+                 <p>Signed: ${formatDate(party.signed_at!)}</p>
+               </div>`
+            : `<p>Not yet signed</p>`
+        }
+      </div>
+    `;
+  })
+);
 
   return `
   <!DOCTYPE html>

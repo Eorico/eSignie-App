@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Vibration,
   Animated,
+  Image
 } from 'react-native';
 import { Plus, Trash2, AlertCircle, ArrowLeft } from 'lucide-react-native';
 import { agreementStorage, partyStorage, witnessStorage } from '@/lib/LocalStorage';
@@ -19,6 +20,9 @@ import { PartyInput, WitnessInput } from '@/lib/interFace';
 import { useLocalSearchParams } from 'expo-router/build/hooks';
 import { AgreementType } from '../+tabs/SelectAgreement';
 import { agreementTemplates } from '@/lib/templates';
+import { useNotif } from '@/lib/notification';
+import { useUserStat } from '../+auth/context/userStatContext';
+import * as ImagePicker from 'expo-image-picker';
 
 // function logic ng paggawa ng agreement
 export default function CreateAgreement() {
@@ -30,11 +34,11 @@ export default function CreateAgreement() {
   const [title, setTitle] = useState('');
   const [terms, setTerms] = useState('');
   const [parties, setParties] = useState<PartyInput[]>([
-    { name: '', role: '', id_number: '', address: '', idType: '' },
+    { name: '', role: '', id_number: '', address: '', idType: '', id_photo_uri: '' },
   ]);
 
   const [witnesses, setWitnesses] = useState<WitnessInput[]>([
-    { name: '', role: '', id_number: '', address: '', idType: '', testimony: '' },
+    { name: '', role: '', id_number: '', address: '', idType: '', testimony: '', id_photo_uri: '' },
   ]);
 
   // loading
@@ -91,6 +95,12 @@ export default function CreateAgreement() {
   const typeParams = params.type as AgreementType | undefined;
 
   const [agreementType] = useState<AgreementType | null>(typeParams || null);
+
+  const { addNotification } = useNotif();
+  const { incrementStat } = useUserStat();
+
+  const [ scanStatus, setScanStatus ] = useState<Record<number, string>>({});
+
   
   useEffect(() => {
     if (agreementType) {
@@ -187,6 +197,7 @@ export default function CreateAgreement() {
       id_number: false,
       address: false,
       idType: false,
+      id_photo_uri: false
     }));
 
     const witnessErrors = witnesses.map(() => ({
@@ -195,7 +206,8 @@ export default function CreateAgreement() {
       id_number: false,
       address: false,
       idType: false,
-      testimony: false
+      testimony: false,
+      id_photo_uri: false
     }));
 
     // 🔹 Title check
@@ -235,7 +247,7 @@ export default function CreateAgreement() {
       ) {
         isValid = false;
         fadeParties[i].forEach((anim, j) => {
-          if (partyErrors[i][['name', 'role', 'id_number', 'address', 'idType'][j] as keyof PartyInput]) {
+          if (partyErrors[i][['name', 'role', 'id_number', 'address', 'idType', 'id_photo_uri'][j] as keyof PartyInput]) {
             triggerFade(anim);
           }
         });
@@ -262,7 +274,7 @@ export default function CreateAgreement() {
       ) {
         isValid = false;
         fadeWitnesses[i].forEach((anim, j) => {
-          if (witnessErrors[i][['name', 'role', 'id_number', 'address', 'idType'][j] as keyof PartyInput]) {
+          if (witnessErrors[i][['name', 'role', 'id_number', 'address', 'idType','id_photo_uri'][j] as keyof WitnessInput]) {
             triggerFade(anim);
           }
         });
@@ -298,6 +310,47 @@ export default function CreateAgreement() {
     return isValid;
   };
 
+  const pickImageId = async (index: number) => {
+    try {
+      // Explicitly type result
+      const result: ImagePicker.ImagePickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+      });
+
+      // Return if cancelled
+      if (result.canceled) return;
+
+      // Safe access with optional chaining
+      const uri = result.assets?.[0]?.uri;
+
+      if (!uri) {
+        alert('No image selected');
+        return;
+      }
+
+      updatePerson(index, 'id_photo_uri', uri);
+
+      await verifyId(uri, index);
+
+    } catch (error) {
+      console.error('Error picking image:', error);
+      alert('Failed to pick an image');
+    }
+  };
+
+
+  const verifyId = async (uri: string, index: number) => {
+    if (!uri) {
+      alert('ID, ID TYPE, and ID photo are required for verification');
+      return false;
+    }
+    
+    setScanStatus((prev) => ({ ...prev, [index]: 'Scanned' }));
+
+    return true;
+  };
+
   // save agreement
   const saveAgreement = async () => {
     if (!validateForm()) return;
@@ -309,10 +362,11 @@ export default function CreateAgreement() {
 
     setLoading(true);
     try {
+      const status: 'draft' | 'created' = 'created';
       const agreement = await agreementStorage.create(user.email, {
         title: title.trim(),
         terms: terms,
-        status: 'draft',
+        status: status,
       });
 
       const partiesData = parties.map((party) => ({
@@ -322,6 +376,7 @@ export default function CreateAgreement() {
         id_number: party.id_number.toString(),
         address: party.address.trim(),
         idType: party.idType.trim(),
+        id_photo_uri: party.id_photo_uri
       }));
 
       await partyStorage.createMultiple(partiesData);
@@ -334,15 +389,22 @@ export default function CreateAgreement() {
         address: witness.address.trim(),
         testimony: witness.testimony?.trim(),
         idType: witness.idType.trim(),
+        id_photo_uri: witness.id_photo_uri,
       }));
 
       await witnessStorage.createMultiple(witnessData);
 
       setTitle('');
       setTerms('');
-      setParties([{ name: '', role: '', id_number: '', address: '', idType: ''}]);
-      setWitnesses([{ name: '', role: '', id_number: '', address: '', idType: '', testimony: ''}]);
+      setParties([{ name: '', role: '', id_number: '', address: '', idType: '', id_photo_uri: ''}]);
+      setWitnesses([{ name: '', role: '', id_number: '', address: '', idType: '', testimony: '', id_photo_uri: ''}]);
       setInvalidFields({ title: false, terms: false, parties: [], witnesses: [] });
+
+      addNotification(`Agreement "${title.trim()}" created successfully!`); 
+      incrementStat('createdAgreement');
+      if (agreement.status === 'completed') incrementStat('completedAgreement');
+      if (agreement.status === 'draft') incrementStat('draftsAgreement')
+
       router.push(`/+tabs/Agreements`);
     } finally {
       setLoading(false);
@@ -361,7 +423,7 @@ export default function CreateAgreement() {
           <ArrowLeft size={24} color="#F5F5F0" />
         </TouchableOpacity>
 
-        <Text style={CreateAgreementstyles.headerTitle}>Create Agreement</Text>
+        <Text style={CreateAgreementstyles.headerTitle}>{agreementType} Agreement</Text>
       </View>
         
       <ScrollView 
@@ -596,178 +658,195 @@ export default function CreateAgreement() {
 
             <ScrollView nestedScrollEnabled showsVerticalScrollIndicator>
               
-              {(currentType === 'party' ? parties : witnesses).map((party, i) => (
-                <View key={i} style={{ marginBottom: 15 }}>
-                  <View style={CreateAgreementstyles.partyHeader}>
-                    <Text style={CreateAgreementstyles.partyLabel}>
-                      {currentType === 'party' ? `Party ${i + 1}` : `Witness ${i + 1}`}
-                    </Text>
-                    {(currentType === 'party' ? parties : witnesses).length > 1 && (
-                      <TouchableOpacity onPress={() => removePerson(i)}>
-                        <Trash2 size={23} color="#ca1212ff" />
-                      </TouchableOpacity>
+                {(currentType === 'party' ? parties : witnesses).map((party, i) => (
+                  <View key={i} style={{ marginBottom: 15 }}>
+                    <View style={CreateAgreementstyles.partyHeader}>
+                      <Text style={CreateAgreementstyles.partyLabel}>
+                        {currentType === 'party' ? `Party ${i + 1}` : `Witness ${i + 1}`}
+                      </Text>
+                      {(currentType === 'party' ? parties : witnesses).length > 1 && (
+                        <TouchableOpacity onPress={() => removePerson(i)}>
+                          <Trash2 size={23} color="#ca1212ff" />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+
+                    {(['name', 'role', 'id_number', 'address'] as const).map((field, j) => (
+                      <Animated.View
+                        key={field}
+                        style={{
+                          position: 'relative',
+                          marginBottom: 8,
+                        }}
+                      >
+
+                        <TextInput
+                          style={[CreateAgreementstyles.input, {
+                            borderColor: (currentType === 'party' ? invalidFields.parties[i]?.[field] : invalidFields.witnesses[i]?.[field]) && 
+                            (currentType === 'party' ? fadeParties[i] : fadeWitnesses[i]) 
+                            ? 'red' : '#632402ff' 
+                          },
+                        ]}
+                          value={
+                            field === 'id_number'
+                              ? party.id_number || ''
+                              : party[field]
+                          }
+                          onChangeText={(v) => updatePerson(i, field, v)}
+                          placeholder={
+                            
+                            field === 'id_number' ? 'Phone No.' : 
+                            field === 'name' ? 'Full Name' :
+                            field === 'role' ? 'Role':
+                            'Address'
+                          }
+                          placeholderTextColor="#484b4fbd"
+                          keyboardType={field === 'id_number' ? 'numeric' : 'default'}
+                        />
+                        
+                        {(currentType === 'party' ? invalidFields.parties[i]?.[field] : invalidFields.witnesses[i]?.[field]) && (
+                          <Animated.View
+                            style={{
+                              opacity: (currentType === 'party' ? fadeParties[i][j] : fadeWitnesses[i][j]),
+                              position: 'absolute',
+                              right: 10,
+                              top: 10,
+                            }}
+                          >
+                            <AlertCircle size={18} color="red" />
+                          </Animated.View>
+                        )}
+                      </Animated.View>
+                    ))}
+
+                    {currentType === 'witness' && (
+                      <View
+                        style={{
+                          borderWidth: 1,
+                          borderColor: invalidFields.witnesses[i]?.testimony ? 'red' : '#632402ff',
+                          borderRadius: 8,
+                          minHeight: 150,
+                          maxHeight: 200,
+                          backgroundColor: '#fff',
+                          marginBottom: 10,
+                          overflow: 'hidden'
+                        }}
+                      >
+                        <RichToolbar 
+                          editor={textEditor}
+                          selectedIconTint='#632402ff'
+                          iconTint='#444'
+                          actions={[
+                            actions.setBold,
+                            actions.setItalic,
+                            actions.insertBulletsList,
+                            actions.insertOrderedList,
+                          ]}
+                          style={{
+                            backgroundColor: '#fff',
+                            borderColor: '#632402ff',
+                            borderWidth: 1,
+                            borderRadius: 8,
+                            marginBottom: 4,
+                            height: 35,
+                          }}
+                        />
+
+                        <RichEditor 
+                          initialContentHTML={witnesses[i].testimony || ''}
+                          onChange={(html) => updatePerson(i, 'testimony', html)}
+                          editorStyle={{
+                            backgroundColor: '#fff',
+                            color: '#000',
+                            placeholderColor: '#484b4fbd',
+                            contentCSSText: 'font-size:14px; padding: 8px',
+                          }}
+                          placeholder='Testimony'
+                          style={{
+                            flex: 1,
+                            minHeight: 150,
+                            maxHeight: 200
+                          }}
+                        />
+                      </View>
+                    )}
+                  
+
+                  {/* ID Type Dropdown */}
+                  <View
+                    style={{
+                      borderWidth: 1,
+                      borderColor: invalidFields.parties[i]?.idType ? 'red' : '#632402ff',
+                      borderRadius: 8,
+                      marginBottom: 8,
+                      paddingHorizontal: 10,
+                    }}
+                  >
+                    <Picker
+                      selectedValue={party.idType}
+                      onValueChange={(v) => updatePerson(i, 'idType', v)}
+                    >
+                      <Picker.Item label="Select ID Type" value="" />
+                      <Picker.Item label="National ID" value="national" />
+                      <Picker.Item label="Postal ID" value="postal" />
+                      <Picker.Item label="License" value="license" />
+                      <Picker.Item label="Other" value="other" />
+                    </Picker>
+
+                    {party.idType && (
+                      <View style={{ marginBottom: 8 }}>
+                        <Text style={{ fontSize: 12, color: '#632402ff', marginBottom: 4 }}>
+                          Selected ID Type:
+                        </Text>
+                        <Text style={{ 
+                          fontSize: 14, 
+                          fontWeight: 'bold',
+                          color: '#632402ff',
+                          padding: 8,
+                          backgroundColor: '#f5f5f5',
+                          borderRadius: 4,
+                          borderWidth: 1,
+                          borderColor: '#632402ff'
+                        }}>
+                          {party.idType === 'national' && 'National ID'}
+                          {party.idType === 'postal' && 'Postal ID'}
+                          {party.idType === 'license' && 'License'}
+                          {party.idType === 'other' && 'Other'}
+                        </Text>
+                      </View>
                     )}
                   </View>
 
-                  {(['name', 'role', 'id_number', 'address'] as const).map((field, j) => (
-                    <Animated.View
-                      key={field}
+                    <TouchableOpacity
                       style={{
-                        position: 'relative',
-                        marginBottom: 8,
-                      }}
-                    >
-
-                      <TextInput
-                        style={[CreateAgreementstyles.input, {
-                          borderColor: (currentType === 'party' ? invalidFields.parties[i]?.[field] : invalidFields.witnesses[i]?.[field]) && 
-                          (currentType === 'party' ? fadeParties[i] : fadeWitnesses[i]) 
-                          ? 'red' : '#632402ff' 
-                        },
-                      ]}
-                        value={
-                          field === 'id_number'
-                            ? party.id_number || ''
-                            : party[field]
-                        }
-                        onChangeText={(v) => updatePerson(i, field, v)}
-                        placeholder={
-                          
-                          field === 'id_number' ? 'Phone No.' : 
-                          field === 'name' ? 'Full Name' :
-                          field === 'role' ? 'Role':
-                          'Address'
-                        }
-                        placeholderTextColor="#484b4fbd"
-                        keyboardType={field === 'id_number' ? 'numeric' : 'default'}
-                      />
-                      
-                      {(currentType === 'party' ? invalidFields.parties[i]?.[field] : invalidFields.witnesses[i]?.[field]) && (
-                        <Animated.View
-                          style={{
-                            opacity: (currentType === 'party' ? fadeParties[i][j] : fadeWitnesses[i][j]),
-                            position: 'absolute',
-                            right: 10,
-                            top: 10,
-                          }}
-                        >
-                          <AlertCircle size={18} color="red" />
-                        </Animated.View>
-                      )}
-                    </Animated.View>
-                  ))}
-
-                  {currentType === 'witness' && (
-                    <View
-                      style={{
-                        borderWidth: 1,
-                        borderColor: invalidFields.witnesses[i]?.testimony ? 'red' : '#632402ff',
-                        borderRadius: 8,
-                        minHeight: 150,
-                        maxHeight: 200,
-                        backgroundColor: '#fff',
-                        marginBottom: 10,
-                        overflow: 'hidden'
-                      }}
-                    >
-                      <RichToolbar 
-                        editor={textEditor}
-                        selectedIconTint='#632402ff'
-                        iconTint='#444'
-                        actions={[
-                          actions.setBold,
-                          actions.setItalic,
-                          actions.insertBulletsList,
-                          actions.insertOrderedList,
-                        ]}
-                        style={{
-                          backgroundColor: '#fff',
-                          borderColor: '#632402ff',
-                          borderWidth: 1,
-                          borderRadius: 8,
-                          marginBottom: 4,
-                          height: 35,
-                        }}
-                      />
-
-                      <RichEditor 
-                        initialContentHTML={witnesses[i].testimony || ''}
-                        onChange={(html) => updatePerson(i, 'testimony', html)}
-                        editorStyle={{
-                          backgroundColor: '#fff',
-                          color: '#000',
-                          placeholderColor: '#484b4fbd',
-                          contentCSSText: 'font-size:14px; padding: 8px',
-                        }}
-                        placeholder='Testimony'
-                        style={{
-                          flex: 1,
-                          minHeight: 150,
-                          maxHeight: 200
-                        }}
-                      />
-                    </View>
-                  )}
-                
-
-                {/* ID Type Dropdown */}
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderColor: invalidFields.parties[i]?.idType ? 'red' : '#632402ff',
-                    borderRadius: 8,
-                    marginBottom: 8,
-                    paddingHorizontal: 10,
-                  }}
-                >
-                  <Picker
-                    selectedValue={party.idType}
-                    onValueChange={(v) => updatePerson(i, 'idType', v)}
-                  >
-                    <Picker.Item label="Select ID Type" value="" />
-                    <Picker.Item label="National ID" value="national" />
-                    <Picker.Item label="Postal ID" value="postal" />
-                    <Picker.Item label="License" value="license" />
-                    <Picker.Item label="Other" value="other" />
-                  </Picker>
-                  {party.idType && (
-                    <View style={{ marginBottom: 8 }}>
-                      <Text style={{ fontSize: 12, color: '#632402ff', marginBottom: 4 }}>
-                        Selected ID Type:
-                      </Text>
-                      <Text style={{ 
-                        fontSize: 14, 
-                        fontWeight: 'bold',
-                        color: '#632402ff',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         padding: 8,
-                        backgroundColor: '#f5f5f5',
-                        borderRadius: 4,
-                        borderWidth: 1,
-                        borderColor: '#632402ff'
-                      }}>
-                        {party.idType === 'national' && 'National ID'}
-                        {party.idType === 'postal' && 'Postal ID'}
-                        {party.idType === 'license' && 'License'}
-                        {party.idType === 'other' && 'Other'}
-                      </Text>
-                    </View>
-                  )}
-                </View>
+                        backgroundColor: '#632402ff',
+                        borderRadius: 8,
+                        marginBottom: 10,
+                      }}
+                      onPress={() => pickImageId(i)}
+                    >
+                      <Text style={{ color: '#fff' }}>Upload ID</Text>
+                    </TouchableOpacity>
 
-                <TouchableOpacity
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 8,
-                    backgroundColor: '#632402ff',
-                    borderRadius: 8,
-                    marginBottom: 10,
-                  }}
-                  onPress={() => console.log('Upload ID for party', i)}
-                >
-                  <Text style={{ color: '#fff' }}>Upload ID</Text>
-                </TouchableOpacity>
+                    {party.id_photo_uri && (
+                      <View style={{ alignItems: 'center', marginBottom: 10, position: 'relative' }}>
+                        <Image
+                          source={{ uri: party.id_photo_uri }}
+                          style={{
+                            width: 350,
+                            height: 200,
+                            borderRadius: 10,
+                            borderWidth: 1,
+                            borderColor: '#632402ff',
+                            resizeMode: 'cover',
+                          }}
+                        />
+                      </View>
+                    )}
 
                       </View>
                     ))}

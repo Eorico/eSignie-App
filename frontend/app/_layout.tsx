@@ -6,6 +6,8 @@ import { useFR } from "@/hooks/useFR";
 import { AuthProvider, useAuth } from "./+auth/context/authContext";
 import SplashScreen from "./+splashScreen/SplashScreen";
 import { Animated } from "react-native";
+import { NotifProvider } from '@/lib/notification';
+import { UserStatProvider } from './+auth/context/userStatContext';
 
 // Root layout for router connections: ito ung nagcoconnect sa mga pages
 const RootLayoutNav = () => {
@@ -73,8 +75,12 @@ export default function RootLayout() {
   useFR();
   return (
     <AuthProvider>
-      <RootLayoutNav />
-      <StatusBar style="auto" />
+      <NotifProvider>
+        <UserStatProvider>
+          <RootLayoutNav />
+          <StatusBar style="auto" />
+        </UserStatProvider>
+      </NotifProvider>
     </AuthProvider>
   );
 }

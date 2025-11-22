@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { CheckSquare, Info, ChevronRightCircle  } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 
-export type AgreementType = 'rental' | 'employment' | 'buyAndsale' | 'nDa' | 'ParterShip' | 'custom'
+export type AgreementType = 'rental' | 'employment' | 'Buy and Sale' | 'Non-Disclosure' | 'ParterShip' | 'custom'
 
 export default function SelectAgreement () {
     const router = useRouter();
@@ -26,7 +26,7 @@ export default function SelectAgreement () {
             img: require("../../assets/images/Employment.png")
         },
         {
-            id: 'buyAndsale' as AgreementType,
+            id: 'Buy and Sale' as AgreementType,
             title: 'Buy and Sale Agreement',
             description: 'For purchasing and selling goods or services.',
             img: require("../../assets/images/BuyAndSale.png")
@@ -38,7 +38,7 @@ export default function SelectAgreement () {
             img: require("../../assets/images/Partnership.png")
         },
         {
-            id: 'nDa' as AgreementType,
+            id: 'Non-Disclosure' as AgreementType,
             title: 'Non-Disclosure Agreement',
             description: 'To protect confidential information between parties.',
             img: require("../../assets/images/NonDisclosure.png")

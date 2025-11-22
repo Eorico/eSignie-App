@@ -13,6 +13,7 @@ import { agreementStorage, partyStorage, witnessStorage, type AgreementWithParti
 import SignatureModal from '@/components/ui/SignatureModal';
 import { generatePDF } from '@/lib/utils/pdfGenerator';
 import { CreatedAgreementstyles } from '@/styles/Created_Agreement_Design';
+import { CreateAgreementstyles } from '@/styles/CreateAgreement_Design';
 
 // ito ung agreement details 
 export default function AgreementDetail() {
@@ -136,7 +137,8 @@ export default function AgreementDetail() {
 
     if (agreementData) {
       const allPartiesSigned = agreementData.parties.every(p => p.signature_url);
-      if (allPartiesSigned) {
+      const allWitnessesSigned = agreementData.witnesses?.every(w => w.signature_url) ?? true;
+      if (allPartiesSigned && allWitnessesSigned) {
         await agreementStorage.update(id as string, { status: 'completed' });
       }
     }
@@ -289,6 +291,23 @@ export default function AgreementDetail() {
                   <Text style={CreatedAgreementstyles.partyValue}>{person.idType}</Text>
                 </View>
 
+                {person.id_photo_uri && (
+                  <View style={{ alignItems: 'center', marginVertical: 8 }}>
+                    <Text style={CreateAgreementstyles.partyLabel}>ID Photo</Text>
+                    <Image 
+                      source={{ uri: person.id_photo_uri }}
+                      style={{
+                        width: 320,
+                        height: 200,
+                        borderRadius: 10,
+                        borderWidth: 1,
+                        borderColor: '#632402ff',
+                        resizeMode: 'cover',
+                      }}
+                    />
+                  </View>
+                )}
+
                 {person.signature_url ? (
                   <View style={CreatedAgreementstyles.signatureContainer}>
                     <Text style={CreatedAgreementstyles.partyLabel}>Signature</Text>
@@ -310,6 +329,7 @@ export default function AgreementDetail() {
                     <Text style={CreatedAgreementstyles.signButtonText}>Add Signature</Text>
                   </TouchableOpacity>
                 )}
+
               </View>
             ))}
 
@@ -336,6 +356,23 @@ export default function AgreementDetail() {
                     <Text style={CreatedAgreementstyles.partyValue}>{witness.address}</Text>
                     <Text style={CreatedAgreementstyles.partyValue}>{witness.idType}</Text>
                   </View>
+
+                  {witness.id_photo_uri && (
+                    <View style={{ alignItems: 'center', marginVertical: 8 }}>
+                      <Text style={CreateAgreementstyles.partyLabel}>ID Photo</Text>
+                      <Image 
+                        source={{ uri: witness.id_photo_uri }}
+                        style={{
+                          width: 320,
+                          height: 200,
+                          borderRadius: 10,
+                          borderWidth: 1,
+                          borderColor: '#632402ff',
+                          resizeMode: 'cover',
+                        }}
+                      />
+                    </View>
+                  )}
 
                   {witness.signature_url ? (
                     <View style={CreatedAgreementstyles.signatureContainer}>
