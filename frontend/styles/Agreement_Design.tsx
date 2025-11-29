@@ -75,6 +75,7 @@ export const Agreementstyles = StyleSheet.create({
     color: '#111827',
     marginTop: 16,
     marginBottom: 8,
+    textAlign: 'center',
   },
   emptyText: {
     fontSize: 14,

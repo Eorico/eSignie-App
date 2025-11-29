@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -8,6 +9,8 @@ import {
 import SignatureCanvas from 'react-native-signature-canvas';
 import { X } from 'lucide-react-native';
 import { SignatureModalstyles } from '@/styles/SignatureModal_Design';
+import i18n from "@/lib/language";
+import { useTranslation } from "react-i18next";
 
 // signature component
 interface SignatureModalProps {
@@ -27,6 +30,15 @@ export default function SignatureModal({
   const [hasSignature, setHasSignature] = useState(false);
   const [tempSignature, setTempSignature] = useState<string | null>(null); 
   const [dateWaterMark, setdateWaterMark] = useState('');
+  const { t } = useTranslation();
+  const [languageModal, setLanguageModal] = useState(false);
+
+  // Force re-render when language changes
+  const [, forceUpdate] = React.useState(false);
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
+    setLanguageModal(false);
+  };
 
   useEffect(() => {
     if (visible) {
@@ -131,13 +143,13 @@ export default function SignatureModal({
     >
       <View style={SignatureModalstyles.container}>
         <View style={SignatureModalstyles.header}>
-          <Text style={SignatureModalstyles.title}>Sign Agreement</Text>
+          <Text style={SignatureModalstyles.title}>{t('signature.title')}</Text>
           <TouchableOpacity onPress={handleCloseModal}>
             <X size={24} color="#111827" />
           </TouchableOpacity>
         </View>
 
-        <Text style={SignatureModalstyles.subtitle}>Signature for {partyName}</Text>
+        <Text style={SignatureModalstyles.subtitle}>{t('signature.signFor', { name: partyName })}</Text>
 
         <View style={SignatureModalstyles.canvasContainer}>
           <SignatureCanvas
@@ -162,7 +174,7 @@ export default function SignatureModal({
             style={SignatureModalstyles.clearButton}
             onPress={handleClear}
           >
-            <Text style={SignatureModalstyles.clearButtonText}>Clear</Text>
+            <Text style={SignatureModalstyles.clearButtonText}>{t('signature.clear')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
@@ -172,7 +184,7 @@ export default function SignatureModal({
             onPress={handleSave}       // save only when user clicks
             disabled={!hasSignature}
           >
-            <Text style={SignatureModalstyles.saveButtonText}>Save Signature</Text>
+            <Text style={SignatureModalstyles.saveButtonText}>{t('signature.save')}</Text>
           </TouchableOpacity>
         </View>
       </View>

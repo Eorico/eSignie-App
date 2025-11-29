@@ -1,3 +1,4 @@
+import React from 'react';
 import { useRouter } from "expo-router";
 import { Tabs } from "expo-router";
 import { List, User, Bell, XCircle, Settings } from "lucide-react-native"; 
@@ -5,15 +6,26 @@ import { useRef, useState } from "react";
 import { Modal, Pressable, GestureResponderEvent, Text, StyleSheet, View, Animated, Image} from "react-native";
 import { useAuth } from "../+auth/context/authContext";
 import { useNotif } from "@/lib/notification";
+import i18n from "@/lib/language";
+import { useTranslation } from "react-i18next";
 
 export default function TabLayout() {
   const {user} = useAuth();
   const router = useRouter();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const { notifications, clearNotifications } = useNotif();
+  const { t } = useTranslation();
+  const [languageModal, setLanguageModal] = useState(false);
   const handleBellPress = (event: GestureResponderEvent) => {
     setModalVisible(true);
     clearNotifications();
+  };
+
+  // Force re-render when language changes
+  const [, forceUpdate] = React.useState(false);
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
+    setLanguageModal(false);
   };
 
   return (
@@ -96,7 +108,7 @@ export default function TabLayout() {
                 <View style={NotifStyle.modalCard}>
                   <View style={NotifStyle.headerRow}>
 
-                    <Text style={NotifStyle.modalTitle}>Notifications</Text>
+                    <Text style={NotifStyle.modalTitle}>{t('layout.notif1')}</Text>
                     <Pressable onPress={() => setModalVisible(false)}>
                       <Text style={NotifStyle.closeX}><XCircle size={24}/></Text>
                     </Pressable>
@@ -114,7 +126,7 @@ export default function TabLayout() {
                         </View>
                       ))
                     ) : (
-                      <Text style={NotifStyle.notificationText}>No New notification</Text>
+                      <Text style={NotifStyle.notificationText}>{t('layout.notif2')}</Text>
                     )}
                     
                   </View>
@@ -128,7 +140,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="Agreements"
         options={{
-          title: "Agreement",
+          title: t('homeAgreement.tabTitle1'),
           tabBarIcon: ({ size, color }) => <List size={size} color={color} />,
         }}
       />
@@ -195,7 +207,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="Profile"
         options={{
-          title: "Profile",
+          title: t('homeAgreement.tabTitle2'),
           headerTitle: user ? `${user.email}` : "Profile",
           tabBarIcon: ({ size, color }) => <User size={size} color={color} />,
           headerRight: () => (

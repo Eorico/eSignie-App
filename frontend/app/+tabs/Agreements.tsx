@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useCallback } from 'react';
 import {
   View,
@@ -11,6 +12,8 @@ import { FileText, ChevronRight } from 'lucide-react-native';
 import { agreementStorage, type AgreementWithPartiesAndWitness } from '@/lib/LocalStorage';
 import { Agreementstyles } from '@/styles/Agreement_Design';
 import { useAuth } from '../+auth/context/authContext';
+import i18n from "@/lib/language";
+import { useTranslation } from "react-i18next";
 
 
 // para sa agreement page
@@ -21,7 +24,16 @@ export default function Agreements() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
+  const [languageModal, setLanguageModal] = useState(false);
   
+  // Force re-render when language changes
+  const [, forceUpdate] = React.useState(false);
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
+    setLanguageModal(false);
+  };
+
   const {user} = useAuth();
 
   const fetchAgreements = async () => {
@@ -135,9 +147,9 @@ export default function Agreements() {
   const renderEmptyState = () => (
     <View style={Agreementstyles.emptyContainer}>
       <FileText size={64} color="#6c6f74ff" />
-      <Text style={Agreementstyles.emptyTitle}>No Agreements Yet</Text>
+      <Text style={Agreementstyles.emptyTitle}>{t('agreement.noAgreeYet')}</Text>
       <Text style={Agreementstyles.emptyText}>
-        Create your first agreement using the Create tab
+        {t('agreement.noAgreeYetsubtext')}
       </Text>
     </View>
   );
@@ -148,7 +160,7 @@ export default function Agreements() {
       <View style={Agreementstyles.errorContainer}>
         <Text style={Agreementstyles.errorText}>{error}</Text>
         <TouchableOpacity style={Agreementstyles.retryButton} onPress={fetchAgreements}>
-          <Text style={Agreementstyles.retryButtonText}>Retry</Text>
+          <Text style={Agreementstyles.retryButtonText}>{t('agreement.retry')}</Text>
         </TouchableOpacity>
       </View>
     );

@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -23,12 +24,23 @@ import { agreementTemplates } from '@/lib/templates';
 import { useNotif } from '@/lib/notification';
 import { useUserStat } from '../+auth/context/userStatContext';
 import * as ImagePicker from 'expo-image-picker';
+import i18n from "@/lib/language";
+import { useTranslation } from "react-i18next";
 
 // function logic ng paggawa ng agreement
 export default function CreateAgreement() {
   // routers
   const router = useRouter();
   const { user } = useAuth();
+  const { t } = useTranslation();
+  const [languageModal, setLanguageModal] = useState(false);
+
+  // Force re-render when language changes
+  const [, forceUpdate] = React.useState(false);
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
+    setLanguageModal(false);
+  };
 
   // title inputs
   const [title, setTitle] = useState('');
@@ -436,7 +448,7 @@ export default function CreateAgreement() {
       
 
         <View style={CreateAgreementstyles.content}>
-          <Text style={CreateAgreementstyles.title}>Title</Text>
+          <Text style={CreateAgreementstyles.title}>{t('createAgreement.title')}</Text>
 
           {/* Title */}
           <Animated.View
@@ -461,7 +473,7 @@ export default function CreateAgreement() {
                 ]}
                 value={title}
                 onChangeText={setTitle}
-                placeholder="Ex: E-Signie Agreement"
+                placeholder={t('createAgreement.placeholderTitle')} 
                 placeholderTextColor="#484b4fbd"
               />
 
@@ -487,7 +499,7 @@ export default function CreateAgreement() {
               }),
             }}
           >
-            <Text style={CreateAgreementstyles.title}>TERMS AND CONDITIONS</Text>
+            <Text style={CreateAgreementstyles.title}>{t('createAgreement.TnC')}</Text>
 
             {/* Toolbar (Formatting Buttons) */}
             <RichToolbar
@@ -547,7 +559,7 @@ export default function CreateAgreement() {
                       zIndex: 0
                     },
                   ]}
-                  placeholder="Write your Agreement Title, Terms, and Conditions here..."
+                  placeholder={t('createAgreement.placeholderTerms')}
                   initialContentHTML={terms}
                   onChange={(html) => setTerms(html)}
                   editorStyle={{
@@ -589,7 +601,7 @@ export default function CreateAgreement() {
                 height: 490,
                 overflow: 'hidden'
           }]}>
-            <Text style={CreateAgreementstyles.title}>PARTY'S AND WITNESSES</Text>
+            <Text style={CreateAgreementstyles.title}>{t('createAgreement.PandW')}</Text>
 
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
 
@@ -612,7 +624,7 @@ export default function CreateAgreement() {
                     color: currentType === 'party' ? '#fff' : '#000', fontWeight: 'bold', 
                     margin: showWitnessBorder ? 5 : 0
                     }}>
-                      Party
+                      {t('createAgreement.party')}
                   </Text>
                   {
                     showPartyBorder && (
@@ -642,7 +654,7 @@ export default function CreateAgreement() {
                     color: currentType === 'witness' ? '#fff' : '#000', fontWeight: 'bold', 
                     margin: showWitnessBorder ? 5 : 0
                     }}>
-                      Witness
+                      {t('createAgreement.witness')}
                   </Text>
                   {
                     showWitnessBorder && (
@@ -695,10 +707,10 @@ export default function CreateAgreement() {
                           onChangeText={(v) => updatePerson(i, field, v)}
                           placeholder={
                             
-                            field === 'id_number' ? 'Phone No.' : 
-                            field === 'name' ? 'Full Name' :
-                            field === 'role' ? 'Role':
-                            'Address'
+                            field === 'id_number' ? t('createAgreement.phonenum') : 
+                            field === 'name' ? t('createAgreement.fullname') :
+                            field === 'role' ? t('createAgreement.role'):
+                            t('createAgreement.address')
                           }
                           placeholderTextColor="#484b4fbd"
                           keyboardType={field === 'id_number' ? 'numeric' : 'default'}
@@ -786,17 +798,17 @@ export default function CreateAgreement() {
                       selectedValue={party.idType}
                       onValueChange={(v) => updatePerson(i, 'idType', v)}
                     >
-                      <Picker.Item label="Select ID Type" value="" />
+                      <Picker.Item label={t('createAgreement.selectID')} value="" />
                       <Picker.Item label="National ID" value="national" />
                       <Picker.Item label="Postal ID" value="postal" />
                       <Picker.Item label="License" value="license" />
-                      <Picker.Item label="Other" value="other" />
+                      <Picker.Item label={t('createAgreement.other')} value="other" />
                     </Picker>
 
                     {party.idType && (
                       <View style={{ marginBottom: 8 }}>
                         <Text style={{ fontSize: 12, color: '#632402ff', marginBottom: 4 }}>
-                          Selected ID Type:
+                          {t('createAgreement.selected')}
                         </Text>
                         <Text style={{ 
                           fontSize: 14, 
@@ -829,7 +841,7 @@ export default function CreateAgreement() {
                       }}
                       onPress={() => pickImageId(i)}
                     >
-                      <Text style={{ color: '#fff' }}>Upload ID</Text>
+                      <Text style={{ color: '#fff' }}>{t('createAgreement.uploadIDBtn')}</Text>
                     </TouchableOpacity>
 
                     {party.id_photo_uri && (
@@ -856,7 +868,7 @@ export default function CreateAgreement() {
                 <TouchableOpacity onPress={addPerson} style={CreateAgreementstyles.addButton}>
                   <Plus size={18} color="#6b7280" />
                   <Text style={CreateAgreementstyles.addButtonText}>
-                    {currentType === 'party' ? 'Add Party' : 'Add Witness'}
+                    {currentType === 'party' ? t('createAgreement.addPartyBtn') : t('createAgreement.addWitnessBtn')}
                   </Text>
                 </TouchableOpacity>
 
@@ -870,7 +882,7 @@ export default function CreateAgreement() {
                   disabled={loading}
                 >
                   <Text style={CreateAgreementstyles.saveButtonText}>
-                    {loading ? 'Saving...' : 'Create Agreement'}
+                    {loading ? 'Saving...' : t('createAgreement.create')}
                   </Text>
                 </TouchableOpacity>
 

@@ -1,7 +1,10 @@
+import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { CheckSquare, Info, ChevronRightCircle  } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
+import i18n from "@/lib/language";
+import { useTranslation } from "react-i18next";
 
 export type AgreementType = 'rental' | 'employment' | 'Buy and Sale' | 'Non-Disclosure' | 'ParterShip' | 'custom'
 
@@ -11,42 +14,51 @@ export default function SelectAgreement () {
     const scrollRef = useRef<ScrollView>(null);
     const autoScroll = useRef(true);
     const resumeEffectScroll = useRef<NodeJS.Timeout | null>(null);
+    const { t } = useTranslation();
+    const [languageModal, setLanguageModal] = useState(false);
+
+    // Force re-render when language changes
+  const [, forceUpdate] = React.useState(false);
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
+    setLanguageModal(false);
+  };
 
     const agreementObjects = [
         {
             id: 'rental' as AgreementType,
-            title: 'Rental Agreement',
-            description: 'For propert rental or lease agreements.',
+            title: t('selectAgreement.rental'),
+            description: t('selectAgreement.rentalSubtext'),
             img: require("../../assets/images/Rental.png")
         },
         {
             id: 'employment' as AgreementType,
-            title: 'Employment Agreement',
-            description: 'For hiring employees and contractors.',
+            title: t('selectAgreement.employment'),
+            description: t('selectAgreement.employmentSubtext'),
             img: require("../../assets/images/Employment.png")
         },
         {
             id: 'Buy and Sale' as AgreementType,
-            title: 'Buy and Sale Agreement',
-            description: 'For purchasing and selling goods or services.',
+            title: t('selectAgreement.BandA'),
+            description: t('selectAgreement.BandAsubtext'),
             img: require("../../assets/images/BuyAndSale.png")
         },
         {
             id: 'PartnerShip' as AgreementType,
-            title: 'Partnership Agreement',
-            description: 'To outline terms between business partners.',
+            title: t('selectAgreement.partnerShip'),
+            description: t('selectAgreement.partnerShipSubtext'),
             img: require("../../assets/images/Partnership.png")
         },
         {
             id: 'Non-Disclosure' as AgreementType,
-            title: 'Non-Disclosure Agreement',
-            description: 'To protect confidential information between parties.',
+            title: t('selectAgreement.NandA'),
+            description: t('selectAgreement.NandAsubtext'),
             img: require("../../assets/images/NonDisclosure.png")
         },
         {
             id: 'custom' as AgreementType,
-            title: 'Custom Agreement',
-            description: 'Create a personalized agreement from scratch.',
+            title: t('selectAgreement.custom'),
+            description: t('selectAgreement.customSubtext'),
             img: require("../../assets/images/custom.png")
         },
     ]
@@ -89,9 +101,9 @@ export default function SelectAgreement () {
     return (
     <View style={Selectstyles.container}>
       <View style={Selectstyles.header}>
-        <Text style={Selectstyles.title}>Chooose Agreement Type</Text>
-        <Text style={Selectstyles.subtitle}>Create legally binding agreements online.</Text>
-        <Text style={Selectstyles.subtitle}>Follow this steps:</Text>
+        <Text style={Selectstyles.title}>{t('selectAgreement.title')}</Text>
+        <Text style={Selectstyles.subtitle}>{t('selectAgreement.titleSubtext1')}.</Text>
+        <Text style={Selectstyles.subtitle}>{t('selectAgreement.titleSubtext2')}</Text>
       </View>
 
       <View style={Selectstyles.stepIndicator}>
@@ -99,7 +111,7 @@ export default function SelectAgreement () {
           <View style={[Selectstyles.stepCircle, Selectstyles.stepActive]}>  
                 <CheckSquare size={20} color={'#374438ff'} />
           </View>
-          <Text style={Selectstyles.stepLabel}>Select</Text>
+          <Text style={Selectstyles.stepLabel}>{t('selectAgreement.step1')}</Text>
         </View>
 
         <View style={Selectstyles.stepLine} />
@@ -108,7 +120,7 @@ export default function SelectAgreement () {
           <View style={[Selectstyles.stepCircle, {backgroundColor: '#f5aaaaff'}]}>
                 <Info size={20}/>
           </View>
-          <Text style={Selectstyles.stepLabel}>Details</Text>
+          <Text style={Selectstyles.stepLabel}>{t('selectAgreement.step2')}</Text>
         </View>
 
         <View style={Selectstyles.stepLine} />
@@ -117,11 +129,11 @@ export default function SelectAgreement () {
           <View style={[Selectstyles.stepCircle, {backgroundColor: '#f0d3d3ff'}]}>
             <ChevronRightCircle size={20}  />
           </View>
-          <Text style={Selectstyles.stepLabel}>Preview</Text>
+          <Text style={Selectstyles.stepLabel}>{t('selectAgreement.step3')}</Text>
         </View>
       </View>
 
-      <Text style={Selectstyles.sectionTitle}>Select Agreement Type</Text>
+      <Text style={Selectstyles.sectionTitle}>{t('selectAgreement.titleType')}</Text>
 
       <Animated.ScrollView
         ref={scrollRef}

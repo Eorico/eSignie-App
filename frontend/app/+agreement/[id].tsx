@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState, useEffect, useLayoutEffect } from 'react';
 import {
   View,
@@ -14,9 +15,21 @@ import SignatureModal from '@/components/ui/SignatureModal';
 import { generatePDF } from '@/lib/utils/pdfGenerator';
 import { CreatedAgreementstyles } from '@/styles/Created_Agreement_Design';
 import { CreateAgreementstyles } from '@/styles/CreateAgreement_Design';
+import i18n from "@/lib/language";
+import { useTranslation } from "react-i18next";
 
 // ito ung agreement details 
 export default function AgreementDetail() {
+  const { t } = useTranslation();
+  const [languageModal, setLanguageModal] = useState(false);
+
+  // Force re-render when language changes
+  const [, forceUpdate] = React.useState(false);
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
+    setLanguageModal(false);
+  };
+
   const { id } = useLocalSearchParams();
   // router
   const router = useRouter();
@@ -38,7 +51,7 @@ export default function AgreementDetail() {
 
   useLayoutEffect(()=> {
     nav.setOptions({
-       title: "Agreement Details",
+       title: t('id.details'),
       headerShown: true,
       headerRight: () => (
         <TouchableOpacity onPress={handleDelete} style={CreatedAgreementstyles.headerButton}>
@@ -67,14 +80,14 @@ export default function AgreementDetail() {
       const agreementData = await agreementStorage.getById(id as string);
 
       if (!agreementData) {
-        setError('Agreement not found');
+        setError(t('id.error'));
         return;
       }
 
       setAgreementData(agreementData);
       
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load agreement');
+      setError(err instanceof Error ? err.message : t('id.failed'));
     } finally {
       setLoading(false);
     }
@@ -82,12 +95,12 @@ export default function AgreementDetail() {
 
   const handleDelete = async () => {
     Alert.alert(
-      'Delete Agreement',
-      'Are you sure you want to delete this agreement? This action cannot be undone.',
+      t('id.deleteTitle'),
+      t('id.deleteSubtext'),
       [
-        { text: 'Cancel', style: 'cancel' }, 
+        { text: t('id.cancel'), style: 'cancel' }, 
         {
-          text: 'Delete',
+          text: t('id.proceed'),
           style: 'destructive',
           onPress: async () => {
             try {
@@ -258,13 +271,13 @@ export default function AgreementDetail() {
 
             <Text 
               style={CreatedAgreementstyles.exportButtonText}>
-                Export PDF
+                {t('id.export')}
             </Text>
             
           </TouchableOpacity>
 
           <View style={CreatedAgreementstyles.section}>
-            <Text style={CreatedAgreementstyles.sectionTitle}>Terms and Conditions</Text>
+            <Text style={CreatedAgreementstyles.sectionTitle}>{t('id.TnC')}</Text>
             <View style={CreatedAgreementstyles.termsContainer}>
               <Text style={CreatedAgreementstyles.termsText}>{agreementData.terms}</Text>
             </View>
@@ -272,7 +285,7 @@ export default function AgreementDetail() {
 
           <View style={CreatedAgreementstyles.section}>
 
-            <Text style={CreatedAgreementstyles.sectionTitle}>Parties</Text>
+            <Text style={CreatedAgreementstyles.sectionTitle}>{t('id.parties')}</Text>
             {agreementData.parties.map((person) => (
               <View key={person.id} style={CreatedAgreementstyles.partyCard}>
                 <View style={CreatedAgreementstyles.partyHeader}>
@@ -285,7 +298,7 @@ export default function AgreementDetail() {
                 </View>
 
                 <View style={CreatedAgreementstyles.partyInfo}>
-                  <Text style={CreatedAgreementstyles.partyLabel}>ID Number</Text>
+                  <Text style={CreatedAgreementstyles.partyLabel}>{t('id.idnum')}</Text>
                   <Text style={CreatedAgreementstyles.partyValue}>{person.id_number}</Text>
                   <Text style={CreatedAgreementstyles.partyValue}>{person.address}</Text>
                   <Text style={CreatedAgreementstyles.partyValue}>{person.idType}</Text>
@@ -293,7 +306,7 @@ export default function AgreementDetail() {
 
                 {person.id_photo_uri && (
                   <View style={{ alignItems: 'center', marginVertical: 8 }}>
-                    <Text style={CreateAgreementstyles.partyLabel}>ID Photo</Text>
+                    <Text style={CreateAgreementstyles.partyLabel}>{t('id.idphoto')}</Text>
                     <Image 
                       source={{ uri: person.id_photo_uri }}
                       style={{
@@ -310,7 +323,7 @@ export default function AgreementDetail() {
 
                 {person.signature_url ? (
                   <View style={CreatedAgreementstyles.signatureContainer}>
-                    <Text style={CreatedAgreementstyles.partyLabel}>Signature</Text>
+                    <Text style={CreatedAgreementstyles.partyLabel}>{t('id.signTitle')}</Text>
                     <Image
                       source={{ uri: person.signature_url }}
                       style={CreatedAgreementstyles.signatureImage}
@@ -326,7 +339,7 @@ export default function AgreementDetail() {
                     onPress={() => partySign(person.id)}
                   >
                     <Edit size={16} color="#ffffff" />
-                    <Text style={CreatedAgreementstyles.signButtonText}>Add Signature</Text>
+                    <Text style={CreatedAgreementstyles.signButtonText}>{t('id.addSign')}</Text>
                   </TouchableOpacity>
                 )}
 
@@ -337,7 +350,7 @@ export default function AgreementDetail() {
 
           <View style={CreatedAgreementstyles.section}>
 
-            <Text style={CreatedAgreementstyles.sectionTitle}>Witness</Text>
+            <Text style={CreatedAgreementstyles.sectionTitle}>{t('id.witness')}</Text>
             {agreementData.witnesses && agreementData.witnesses.length > 0 ? (
               agreementData.witnesses.map((witness) => (
                 <View key={witness.id} style={CreatedAgreementstyles.partyCard}>
@@ -351,7 +364,7 @@ export default function AgreementDetail() {
                   </View>
 
                   <View style={CreatedAgreementstyles.partyInfo}>
-                    <Text style={CreatedAgreementstyles.partyLabel}>ID Number</Text>
+                    <Text style={CreatedAgreementstyles.partyLabel}>{t('id.idnum')}</Text>
                     <Text style={CreatedAgreementstyles.partyValue}>{witness.id_number}</Text>
                     <Text style={CreatedAgreementstyles.partyValue}>{witness.address}</Text>
                     <Text style={CreatedAgreementstyles.partyValue}>{witness.idType}</Text>
@@ -359,7 +372,7 @@ export default function AgreementDetail() {
 
                   {witness.id_photo_uri && (
                     <View style={{ alignItems: 'center', marginVertical: 8 }}>
-                      <Text style={CreateAgreementstyles.partyLabel}>ID Photo</Text>
+                      <Text style={CreateAgreementstyles.partyLabel}>{t('id.idphoto')}</Text>
                       <Image 
                         source={{ uri: witness.id_photo_uri }}
                         style={{
@@ -376,7 +389,7 @@ export default function AgreementDetail() {
 
                   {witness.signature_url ? (
                     <View style={CreatedAgreementstyles.signatureContainer}>
-                      <Text style={CreatedAgreementstyles.partyLabel}>Signature</Text>
+                      <Text style={CreatedAgreementstyles.partyLabel}>{t('id.signTitle')}</Text>
                       <Image
                         source={{ uri: witness.signature_url }}
                         style={CreatedAgreementstyles.signatureImage}
@@ -392,7 +405,7 @@ export default function AgreementDetail() {
                       onPress={() => witnessSign(witness.id)}
                     >
                       <Edit size={16} color="#ffffff" />
-                      <Text style={CreatedAgreementstyles.signButtonText}>Add Signature</Text>
+                      <Text style={CreatedAgreementstyles.signButtonText}>{t('id.addSign')}</Text>
                     </TouchableOpacity>
                   )}
                 </View>
@@ -400,7 +413,7 @@ export default function AgreementDetail() {
               ) : (
                 <View>
                   <Text>
-                    No witness added to this agreement
+                    {t('id.nowitness')}
                   </Text>
                 </View>
               )
