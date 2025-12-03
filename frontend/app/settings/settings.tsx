@@ -45,7 +45,7 @@ export default function SettingsScreen() {
 
   const settingsOptions = [
     { title: t('settings.dark_mode'), icon: Moon },
-    { title: t('settings.account_privacy'), icon: Shield, onPress: () => router.push("./accountAndPrivacy") },
+    { title: t('settings.account_privacy'), icon: Shield, onPress: () => router.push("/settings/accountAndPrivacy") },
     { title: t('settings.language'), icon: Globe, onPress: () => setLanguageModal(true) },
     { title: t('settings.notification'), icon: Bell },
     { title: t('settings.login_history'), icon: History },
@@ -67,8 +67,9 @@ export default function SettingsScreen() {
       <ScrollView contentContainerStyle={styles.scroll}>
         {settingsOptions.map((item, index) => {
           const Icon = item.icon;
+          console.log("error catch", item.onPress)
           return (
-            <Pressable key={index} style={styles.option} onPress={item.onPress}>
+            <Pressable key={index} style={styles.option} onPress={item.onPress ?? (()=> {})}>
               <View style={styles.iconText}>
                 <Icon color="#8B5E3C" size={22} style={{ marginRight: 15 }} />
                 <Text style={styles.optionText}>{item.title}</Text>

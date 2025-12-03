@@ -10,7 +10,7 @@ export default function AccountAndPrivacy() {
     { title: "Change Name", icon: User, onPress: () => alert("Change Name clicked!") },
     { title: "Change Email", icon: Mail, onPress: () => alert("Change Email clicked!") },
     { title: "Change Password", icon: Lock, onPress: () => alert("Change Password feature coming soon!") },
-  ];
+  ];  
 
   return (
     <View style={styles.container}>
