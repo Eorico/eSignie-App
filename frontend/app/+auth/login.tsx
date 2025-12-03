@@ -1,3 +1,4 @@
+import React from 'react';
 import LottieView from 'lottie-react-native';
 import { useState, useRef, useEffect, use } from 'react';
 import {
@@ -18,6 +19,8 @@ import { Mail, Lock, AlertCircle, EyeOff, Eye, Square, CheckSquare } from 'lucid
 import { LinearGradient } from 'expo-linear-gradient';
 import { Loginstyles } from '@/styles/loginStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from "react-i18next";
+import i18n from "@/lib/language";
 
 // login logic function
 export default function LoginScreen() {
@@ -26,6 +29,16 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [rememberMe, setrememberMe] = useState(false);
+  const { t } = useTranslation();
+  const [languageModal, setLanguageModal] = useState(false);
+
+  // Force re-render when language changes
+  const [, forceUpdate] = React.useState(false);
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
+    setLanguageModal(false);
+  };
+  
   // loading
   const [loading, setLoading] = useState(false);
   // login routers
