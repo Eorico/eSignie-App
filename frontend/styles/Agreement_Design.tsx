@@ -2,8 +2,8 @@ import { StyleSheet } from "react-native";
 
 export const Agreementstyles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#f9cfa3ff',
+    
+    
   },
   listContent: {
     padding: 16,

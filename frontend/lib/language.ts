@@ -122,7 +122,65 @@ const eng={
       signFor: "Signature For {{name}}",
       clear: "Clear",
       save: "Save"
-    }
+    },
+
+    login: {
+      "greetings": [
+      "Hello there!",
+      "Nice to see you back!",
+      "Welcome Back!",
+      "Good Day!",
+      "Howly Mowly"
+    ],
+
+    subtitle: "E-SIGNIE",
+
+    email_placeholder: "Email",
+    password_placeholder: "Password",
+
+    remember_me: "Remember Me",
+    forgot_password: "Forgot Password?",
+
+    login_button: "Log In",
+    login_loading: "Logging in...",
+
+    no_account: "Don't have an account?",
+    signup_here: "Sign Up",
+
+    error_fill_fields: "Please fill in all fields",
+    error_invalid_email: "Please enter a valid email address",
+    error_failed_signin: "Failed to sign in",
+
+    success_created: "Account Successfully Created!",
+
+    lang_english: "English",
+    lang_filipino: "Filipino"
+    },
+
+    register: {
+    title: "Create Account",
+    subtitle: "Sign up to get started",
+    name_placeholder: "Full Name",
+    email_placeholder: "Email",
+    password_placeholder: "Password",
+    confirm_password_placeholder: "Confirm Password",
+    error_fill_fields: "Please fill in all fields",
+    error_invalid_email: "Please enter a valid email address",
+    error_password_length: "Password must be at least 6 characters",
+    error_password_mismatch: "Passwords do not match",
+    error_agree_terms: "Please agree to the terms and conditions.",
+    error_failed_signup: "Failed to create account",
+    create_account: "Create",
+    creating_account: "Creating Account...",
+    already_have_account: "Already have an account?",
+    go_back: "Go back",
+    terms_title: "Terms and Conditions",
+    terms_content: "Welcome to E-Signie! By creating an account, you agree to use this app responsibly...",
+    cancel: "Cancel",
+    agree: "I Agree",
+    terms_text_prefix: "I agree to the",
+    terms_text_link: "Terms and Conditions"
+  }
     
 }
 
@@ -254,9 +312,66 @@ const fil={
       signFor: "Pirma Para Kay {{name}}",
       clear: "Ulitin",
       save: "I-Save"
-    }
+    },
 
+    login: {
+    greetings: [
+      "Kamusta!",
+      "Buti nagbalik ka!",
+      "Maligayang Pagbabalik!",
+      "Magandang Araw!",
+      "Ayun! Bumalik Ka!"
+    ],
 
+    subtitle: "E-SIGNIE",
+
+    email_placeholder: "Email",
+    password_placeholder: "Password",
+
+    remember_me: "Tandaan Ako",
+    forgot_password: "Nakalimutan ang Password?",
+
+    login_button: "Mag Log In",
+    login_loading: "Nagla-log in...",
+
+    no_account: "Wala ka pang account?",
+    signup_here: "Mag-sign Up",
+
+    error_fill_fields: "Paki-fill up ang lahat ng fields",
+    error_invalid_email: "Maglagay ng valid na email address",
+    error_failed_signin: "Hindi makapag-log in",
+
+    success_created: "Matagumpay na Nalikha ang Account!",
+
+    lang_english: "Ingles",
+    lang_filipino: "Filipino"
+
+  },
+
+  register: {
+    title: "Gumawa ng Account",
+    subtitle: "Mag-sign up upang makapagsimula",
+    name_placeholder: "Buong Pangalan",
+    email_placeholder: "Email",
+    password_placeholder: "Password",
+    confirm_password_placeholder: "Kumpirmahin ang Password",
+    error_fill_fields: "Paki-fill up ang lahat ng fields",
+    error_invalid_email: "Maglagay ng valid na email address",
+    error_password_length: "Ang password ay dapat hindi bababa sa 6 na karakter",
+    error_password_mismatch: "Hindi magkatugma ang password",
+    error_agree_terms: "Mangyaring sumang-ayon sa mga tuntunin at kundisyon.",
+    error_failed_signup: "Hindi malikha ang account",
+    create_account: "Gawin",
+    creating_account: "Gumagawa ng Account...",
+    already_have_account: "May account ka na ba?",
+    go_back: "Bumalik",
+    terms_title: "Mga Tuntunin at Kundisyon",
+    terms_content: "Maligayang pagdating sa E-Signie! Sa paggawa ng account, sumasang-ayon kang gamitin ang app nang responsable...",
+    cancel: "Kanselahin",
+    agree: "Sang-ayon ako",
+    terms_text_prefix: "Sang-ayon ako sa :",
+    terms_text_link: "Mga Tuntunin at Kundisyon"
+  }
 
 }
 

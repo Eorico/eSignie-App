@@ -13,39 +13,34 @@ import {
   Modal,
   ActivityIndicator
 } from 'react-native';
-import { AlertCircle, UserPlus, Mail, Lock, User, Eye, EyeOff, CheckSquare, Square } from 'lucide-react-native';
+import { AlertCircle, User, Mail, Lock, Eye, EyeOff, CheckSquare, Square } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useAuth } from './context/authContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SignUpstyles } from '@/styles/signUpStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
+import i18n from '@/lib/language';
 
-// sign up logic function
 export default function SignUpScreen() {
-  // inputs
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [agreeTerms, setAgreeterms] = useState(false);
-
-  const [modalVisble, setModalvisible] = useState(false);
-
-  // validations
+  const [modalVisible, setModalVisible] = useState(false);
   const [invalidInputs, setInvalidInputs] = useState({
     name: false,
     email: false,
     password: false,
     confirmPassword: false,
   });
-
-  // erro and loading 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
-  // routers 
+  const [showPassword, setShowPassword] = useState(false);
   const { signUp } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation();
 
   // Animations
   const iconAnim = useRef(new Animated.Value(0)).current;
@@ -58,11 +53,7 @@ export default function SignUpScreen() {
     inputRange: [0,1],
     outputRange: ['#666', 'red']
   });
-  // toggled view pass
 
-  const [showPassword, setShowPassword] = useState(false);
-
-  // Fade icon + border when invalid
   useEffect(() => {
     const anyInvalid = Object.values(invalidInputs).includes(true);
     if (anyInvalid) {
@@ -85,14 +76,13 @@ export default function SignUpScreen() {
 
   const triggerEye = () => {
     eyeColorAnim.setValue(1);
-      Animated.timing(eyeColorAnim, {
-        toValue: 0,
-        duration: 2000,
-        useNativeDriver: false,
-      }).start();
+    Animated.timing(eyeColorAnim, {
+      toValue: 0,
+      duration: 2000,
+      useNativeDriver: false,
+    }).start();
   };
 
-  // Error text fade in/out
   useEffect(() => {
     if (error) {
       textErrorAnim.setValue(1);
@@ -105,68 +95,57 @@ export default function SignUpScreen() {
     }
   }, [error]);
 
-  // ung dapat ung dulo ng email is @gmail or may @
   const validateEmail = (email: string) => /^[^\s@]+@gmail.com$/.test(email);
 
-  // process ng sign up
   const handleSignUp = async () => {
     setError('');
-
     const newInvalids = {
       name: name.trim() === '',
       email: email.trim() === '',
       password: password.trim() === '',
       confirmPassword: confirmPassword.trim() === '',
     };
-
     setInvalidInputs(newInvalids);
 
     if (Object.values(newInvalids).includes(true)) {
       Vibration.vibrate(200);
-      setError('Please fill in all fields');
+      setError(t('register.error_fill_fields'));
       triggerEye();
       return;
-    }
-
-    else if (!validateEmail(email)) {
+    } else if (!validateEmail(email)) {
       setInvalidInputs(prev => ({ ...prev, email: true }));
       Vibration.vibrate(200);
-      setError('Please enter a valid email address');
+      setError(t('register.error_invalid_email'));
       return;
-    }
-
-    else if (password.length < 6) {
+    } else if (password.length < 6) {
       setInvalidInputs(prev => ({ ...prev, password: true }));
       Vibration.vibrate(200);
-      setError('Password must be at least 6 characters');
+      setError(t('register.error_password_length'));
       triggerEye();
       return;
-    }
-
-    else if (password !== confirmPassword) {
+    } else if (password !== confirmPassword) {
       setInvalidInputs(prev => ({ ...prev, confirmPassword: true }));
       Vibration.vibrate(200);
-      setError('Passwords do not match');
+      setError(t('register.error_password_mismatch'));
       triggerEye();
       return;
     }
-
     if (!agreeTerms) {
-      setError('Please agree to the terms and conditions.');
+      setError(t('register.error_agree_terms'));
       Vibration.vibrate(200);
       return;
     }
 
     setLoading(true);
-
     const delay = new Promise(res => setTimeout(res, 3000));
     const resultPromise = signUp(email, password, name);
     const [result] = await Promise.all([resultPromise, delay]);
-    
     setLoading(false);
 
+
+    
     if (!result.success) {
-      setError(result.error || 'Failed to create account');
+      setError(result.error || t('register.error_failed_signup'));
     } else {
       await AsyncStorage.setItem('ACCOUNT_CREATED', 'true')
       await AsyncStorage.removeItem('CURRRENT_USER');
@@ -174,13 +153,11 @@ export default function SignUpScreen() {
     }
   };
 
-  // pag mali ung input ung border mag rered
   const getAnimatedBorderStyle = (field: keyof typeof invalidInputs) => {
     const borderColor = borderAnim.interpolate({
       inputRange: [0, 1],
       outputRange: ['transparent', 'red'],
     });
-
     return [
       SignUpstyles.inputContainer,
       invalidInputs[field] && {
@@ -190,7 +167,6 @@ export default function SignUpScreen() {
     ];
   };
 
-  // xml
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -207,18 +183,13 @@ export default function SignUpScreen() {
                   resizeMode="contain"
                 />
               </View>
-              <Text style={SignUpstyles.title}>Create Account</Text>
-              <Text style={SignUpstyles.subtitle}>Sign up to get started</Text>
+              <Text style={SignUpstyles.title}>{t('register.title')}</Text>
+              <Text style={SignUpstyles.subtitle}>{t('register.subtitle')}</Text>
             </View>
 
             <View style={SignUpstyles.form}>
               {error ? (
-                <Animated.Text
-                  style={[
-                    SignUpstyles.errorText,
-                    { opacity: textErrorAnim },
-                  ]}
-                >
+                <Animated.Text style={[SignUpstyles.errorText, { opacity: textErrorAnim }]}>
                   {error}
                 </Animated.Text>
               ) : null}
@@ -228,7 +199,7 @@ export default function SignUpScreen() {
                 <User color="#666" size={20} style={SignUpstyles.inputIcon} />
                 <TextInput
                   style={SignUpstyles.input}
-                  placeholder="Full Name"
+                  placeholder={t('register.name_placeholder')}
                   placeholderTextColor="#999"
                   value={name}
                   onChangeText={(text) => {
@@ -249,7 +220,7 @@ export default function SignUpScreen() {
                 <Mail color="#666" size={20} style={SignUpstyles.inputIcon} />
                 <TextInput
                   style={SignUpstyles.input}
-                  placeholder="Email"
+                  placeholder={t('register.email_placeholder')}
                   placeholderTextColor="#999"
                   value={email}
                   onChangeText={(text) => {
@@ -272,7 +243,7 @@ export default function SignUpScreen() {
                 <Lock color="#666" size={20} style={SignUpstyles.inputIcon} />
                 <TextInput
                   style={SignUpstyles.input}
-                  placeholder="Password"
+                  placeholder={t('register.password_placeholder')}
                   placeholderTextColor="#999"
                   value={password}
                   onChangeText={(text) => {
@@ -282,27 +253,13 @@ export default function SignUpScreen() {
                   secureTextEntry={!showPassword}
                   editable={!loading}
                 />
-
                 <TouchableOpacity
-                  onPress={()=>setShowPassword(!showPassword)}
+                  onPress={() => setShowPassword(!showPassword)}
                   disabled={loading}
-                  style={{paddingHorizontal: 8}}
+                  style={{ paddingHorizontal: 8 }}
                 >
-                  {showPassword ? (
-                    <AnimatedEye 
-                      size={20} 
-                      color={eyeIconColor}
-                    />
-                  ):(
-                    <AnimatedEyeOff 
-                      size={20} 
-                      color={eyeIconColor}
-                      />
-                  )}
-
+                  {showPassword ? <AnimatedEye size={20} color={eyeIconColor} /> : <AnimatedEyeOff size={20} color={eyeIconColor} />}
                 </TouchableOpacity>
-
-                {invalidInputs.password}
               </Animated.View>
 
               {/* CONFIRM PASSWORD */}
@@ -310,47 +267,31 @@ export default function SignUpScreen() {
                 <Lock color="#666" size={20} style={SignUpstyles.inputIcon} />
                 <TextInput
                   style={SignUpstyles.input}
-                  placeholder="Confirm Password"
+                  placeholder={t('register.confirm_password_placeholder')}
                   placeholderTextColor="#999"
                   value={confirmPassword}
                   onChangeText={(text) => {
                     setConfirmPassword(text);
-                    if (text.trim())
-                      setInvalidInputs((p) => ({ ...p, confirmPassword: false }));
+                    if (text.trim()) setInvalidInputs((p) => ({ ...p, confirmPassword: false }));
                   }}
                   secureTextEntry={!showPassword}
                   editable={!loading}
                 />
-
                 <TouchableOpacity
-                  onPress={()=>setShowPassword(!showPassword)}
+                  onPress={() => setShowPassword(!showPassword)}
                   disabled={loading}
-                  style={{paddingHorizontal: 8}}
+                  style={{ paddingHorizontal: 8 }}
                 >
-                  {showPassword ? (
-                    <AnimatedEye 
-                      size={20} 
-                      color={eyeIconColor}
-                    />
-                  ):(
-                    <AnimatedEyeOff 
-                      size={20} 
-                      color={eyeIconColor}
-                    />
-                  )}
-
+                  {showPassword ? <AnimatedEye size={20} color={eyeIconColor} /> : <AnimatedEyeOff size={20} color={eyeIconColor} />}
                 </TouchableOpacity>
-
-                {invalidInputs.confirmPassword}
               </Animated.View>
 
-              {/* TERMS AND CONDITION */}
+              {/* TERMS */}
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, marginBottom: 10 }}>
                 <TouchableOpacity
                   onPress={() => setAgreeterms(!agreeTerms)}
                   disabled={loading}
                 >
-                  
                   {agreeTerms ? (
                     <CheckSquare size={24} color="#4CAF50" />
                   ) : (
@@ -358,20 +299,18 @@ export default function SignUpScreen() {
                   )}
                 </TouchableOpacity>
 
-                  <Text style={{ marginLeft: 8, color: '#333', flex: 1}}>
-                    I agree to the{''} : {''} 
-                    <Text
-                      style={{ color: '#1E90FF', textDecorationLine: 'underline' }}
-                      onPress={() => setModalvisible(true)}
-                    >
-                      Terms and Conditions
-                    </Text>
-
-                  </Text>
-
+                <Text style={{ marginLeft: 8, color: '#333', flex: 1 }}>
+                  {t('register.terms_text_prefix')}{" "}
+                <Text
+                  style={{ color: '#1E90FF', textDecorationLine: 'underline' }}
+                  onPress={() => setModalVisible(true)}
+                >
+                  {t('register.terms_text_link')}
+                </Text>
+              </Text>
               </View>
 
-              {/*CREATE BUTTON*/}
+              {/* CREATE BUTTON */}
               <TouchableOpacity
                 style={[SignUpstyles.button, (loading || !agreeTerms) && SignUpstyles.buttonDisabled]}
                 onPress={handleSignUp}
@@ -379,111 +318,51 @@ export default function SignUpScreen() {
               >
                 {loading ? (
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <ActivityIndicator size={'small'} color={'#fff'} style={{ marginRight: 10 }}/>
-                    <Text style={SignUpstyles.buttonText}>Creating Account...</Text>
+                    <ActivityIndicator size={'small'} color={'#fff'} style={{ marginRight: 10 }} />
+                    <Text style={SignUpstyles.buttonText}>{t('register.creating_account')}</Text>
                   </View>
                 ) : (
-                  <Text style={SignUpstyles.buttonText}>Create</Text>
+                  <Text style={SignUpstyles.buttonText}>{t('register.create_account')}</Text>
                 )}
               </TouchableOpacity>
 
+              {/* FOOTER */}
               <View style={SignUpstyles.footer}>
-                <Text style={SignUpstyles.footerText}>Already have an account? </Text>
-                <TouchableOpacity
-                  onPress={() => router.push('/+auth/login')}
-                  disabled={loading}
-                >
-                  <Text style={SignUpstyles.linkText}>Go back</Text>
+                <Text style={SignUpstyles.footerText}>{t('register.already_have_account')}</Text>
+                <TouchableOpacity onPress={() => router.push('/+auth/login')} disabled={loading}>
+                  <Text style={SignUpstyles.linkText}>{t('register.go_back')}</Text>
                 </TouchableOpacity>
               </View>
-              
-              {/* Modal */}
-              <Modal
-                animationType='fade'
-                transparent={true}
-                visible={modalVisble}
-                onRequestClose={() => setModalvisible(false)}
-              >
 
-                <View
-                  style={{ 
-                    flex: 1, 
-                    backgroundColor: 'rgba(0,0,0,0.5)', 
-                    justifyContent: 'center', 
-                    alignContent: 'center' , 
-                    padding: 20,
-                  }}
-                >
-
-                  <View
-                    style={{
-                      backgroundColor: '#fff',
-                      borderRadius: 10,
-                      padding: 25,
-                      width: '100%',
-                      maxWidth: 400,
-                      elevation: 5,
-                    }}
-                  >
-
-                    <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color:'#333'}}>
-                      Terms and Conditions
-                    </Text>
-
+              {/* MODAL */}
+              <Modal animationType="fade" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
+                <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 20 }}>
+                  <View style={{ backgroundColor: '#fff', borderRadius: 10, padding: 25, width: '100%', maxWidth: 400, elevation: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 10, color:'#333' }}>{t('register.terms_title')}</Text>
                     <ScrollView style={{ maxHeight: 250, marginBottom: 15 }}>
-                      <Text style={{ fontSize: 14, color: '#555', lineHeight: 22 }}>
-                        Welcom to E-Signie🦫! By creating an account, you agree to use this app responsibly. 
-                        Do not share you password with others. You are responsible for all activity under you account.
-                        Your information will be stored locally and securely.
-                        We may update these terms from time to time, so please review them periodically.
-                        If you have any questions, contact us at esignie@gmail.com
-                      </Text>
+                      <Text style={{ fontSize: 14, color: '#555', lineHeight: 22 }}>{t('register.terms_content')}</Text>
                     </ScrollView>
-
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                      <TouchableOpacity
-                        onPress={() => setModalvisible(false)}
-                        style={{ 
-                          paddingVertical: 10, 
-                          paddingHorizontal: 20,
-                          backgroundColor: '#ccc',
-                          borderRadius: 10, 
-                         }}
-                      >
-
-                        <Text style={{ color: '#333', fontWeight: '600' }}>
-                            Cancel
-                        </Text>
-
+                      <TouchableOpacity onPress={() => setModalVisible(false)} style={{ paddingVertical: 10, paddingHorizontal: 20, backgroundColor: '#ccc', borderRadius: 10 }}>
+                        <Text style={{ color: '#333', fontWeight: '600' }}>{t('register.cancel')}</Text>
                       </TouchableOpacity>
-
-                      <TouchableOpacity
-                        onPress={() => {
-                          setAgreeterms(true);
-                          setModalvisible(false);
-                        }}
-
-                        style={{
-                          paddingVertical: 10, 
-                          paddingHorizontal: 20,
-                          backgroundColor: '#4CAF50',
-                          borderRadius: 10, 
-                        }}
-                      >
-
-                        <Text style={{ color: '#fff', fontWeight: '600' }}>
-                          I Agree
-                        </Text>
-                        
+                      <TouchableOpacity onPress={() => { setAgreeterms(true); setModalVisible(false); }} style={{ paddingVertical: 10, paddingHorizontal: 20, backgroundColor: '#4CAF50', borderRadius: 10 }}>
+                        <Text style={{ color: '#fff', fontWeight: '600' }}>{t('register.agree')}</Text>
                       </TouchableOpacity>
-
                     </View>
-
                   </View>
-
                 </View>
-                
               </Modal>
+
+              {/* LANGUAGE SWITCHER */}
+              <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
+                <TouchableOpacity onPress={() => i18n.changeLanguage('en')} style={{ marginHorizontal: 10 }}>
+                  <Text style={{ color: i18n.language === 'en' ? '#1E90FF' : '#666', fontWeight: '600' }}>EN</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => i18n.changeLanguage('fil')} style={{ marginHorizontal: 10 }}>
+                  <Text style={{ color: i18n.language === 'fil' ? '#1E90FF' : '#666', fontWeight: '600' }}>FIL</Text>
+                </TouchableOpacity>
+              </View>
 
             </View>
           </View>

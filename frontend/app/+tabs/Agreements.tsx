@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,46 +8,54 @@ import {
 } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { FileText, ChevronRight } from 'lucide-react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { agreementStorage, type AgreementWithPartiesAndWitness } from '@/lib/LocalStorage';
 import { Agreementstyles } from '@/styles/Agreement_Design';
 import { useAuth } from '../+auth/context/authContext';
 import i18n from "@/lib/language";
 import { useTranslation } from "react-i18next";
 
+const THEME_KEY = "@theme_mode";
 
-// para sa agreement page
 export default function Agreements() {
-  // logics
   const router = useRouter();
+  const { t } = useTranslation();
+  const { user } = useAuth();
+
   const [agreements, setAgreements] = useState<AgreementWithPartiesAndWitness[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { t } = useTranslation();
-  const [languageModal, setLanguageModal] = useState(false);
-  
-  // Force re-render when language changes
-  const [, forceUpdate] = React.useState(false);
-  const changeLanguage = (lang: string) => {
-    i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
-    setLanguageModal(false);
-  };
 
-  const {user} = useAuth();
+  // ===========================
+  // THEME STATE (sync with Settings)
+  // ===========================
+  const [isChocoMode, setIsChocoMode] = useState(false);
 
+  useEffect(() => {
+    const loadTheme = async () => {
+      const savedTheme = await AsyncStorage.getItem(THEME_KEY);
+      setIsChocoMode(savedTheme === "choco");
+    };
+    loadTheme();
+  }, []);
+
+  const backgroundColor = isChocoMode ? "#8B5E3C" : "#f9cfa3ff";
+
+  // ===========================
+  // AGREEMENTS FETCH
+  // ===========================
   const fetchAgreements = async () => {
     if (!user) return;
-    
     try {
       setError(null);
-
       const agreementData = await agreementStorage.getAll();
 
       const userAgreementsData = agreementData.filter(
-      (agreement) => agreement.user_email === user.email
+        (agreement) => agreement.user_email === user.email
       );
 
-      // Fetch full agreements with parties
       const agreementsWithParties: AgreementWithPartiesAndWitness[] = await Promise.all(
         userAgreementsData.map(async (agreement) => {
           const fullAgreement = await agreementStorage.getById(agreement.id);
@@ -56,8 +63,8 @@ export default function Agreements() {
         })
       );
 
-      agreementsWithParties.sort((a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      agreementsWithParties.sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
 
       setAgreements(agreementsWithParties);
@@ -91,21 +98,16 @@ export default function Agreements() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed':
-        return '#10b981';
-      case 'signed':
-        return '#3b82f6';
-      default:
-        return '#6b7280';
+      case 'completed': return '#10b981';
+      case 'signed': return '#3b82f6';
+      default: return '#6b7280';
     }
   };
 
-  // status 
   const getStatusText = (status: string) => {
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
-  // rendering of agreement
   const renderAgreementItem = ({ item }: { item: AgreementWithPartiesAndWitness }) => (
     <TouchableOpacity
       style={Agreementstyles.agreementCard}
@@ -115,49 +117,44 @@ export default function Agreements() {
         <View style={Agreementstyles.iconContainer}>
           <FileText size={40} color="#7a4a06ff" />
         </View>
+
         <View style={Agreementstyles.cardContent}>
           <Text style={Agreementstyles.cardTitle} numberOfLines={1}>
             {item.title}
           </Text>
           <Text style={Agreementstyles.cardDate}>{formatDate(item.created_at)}</Text>
         </View>
+
         <View style={Agreementstyles.cardRight}>
-          <View
-            style={[
-              Agreementstyles.statusBadge,
-              { backgroundColor: `${getStatusColor(item.status)}20` },
-            ]}
-          >
-            <Text
-              style={[Agreementstyles.statusText, { color: getStatusColor(item.status) }]}
-            >
+          <View style={[
+            Agreementstyles.statusBadge,
+            { backgroundColor: `${getStatusColor(item.status)}20` },
+          ]}>
+            <Text style={[Agreementstyles.statusText, { color: getStatusColor(item.status) }]}>
               {getStatusText(item.status)}
             </Text>
           </View>
           <ChevronRight size={20} color="#000000ff" />
         </View>
       </View>
+
       <Text style={Agreementstyles.cardSubtext} numberOfLines={2}>
         {item.parties.length} {item.parties.length === 1 ? 'party' : 'parties'}
       </Text>
     </TouchableOpacity>
   );
 
-  // render empty state to nikks
   const renderEmptyState = () => (
     <View style={Agreementstyles.emptyContainer}>
       <FileText size={64} color="#6c6f74ff" />
       <Text style={Agreementstyles.emptyTitle}>{t('agreement.noAgreeYet')}</Text>
-      <Text style={Agreementstyles.emptyText}>
-        {t('agreement.noAgreeYetsubtext')}
-      </Text>
+      <Text style={Agreementstyles.emptyText}>{t('agreement.noAgreeYetsubtext')}</Text>
     </View>
   );
 
-  // once na walang pinakita or nagfailed ung agreement naginawa ito lalabas
   if (error) {
     return (
-      <View style={Agreementstyles.errorContainer}>
+      <View style={[Agreementstyles.errorContainer, { backgroundColor }]}>
         <Text style={Agreementstyles.errorText}>{error}</Text>
         <TouchableOpacity style={Agreementstyles.retryButton} onPress={fetchAgreements}>
           <Text style={Agreementstyles.retryButtonText}>{t('agreement.retry')}</Text>
@@ -166,9 +163,8 @@ export default function Agreements() {
     );
   }
 
-  // render na agreement 
   return (
-    <View style={Agreementstyles.container}>
+    <View style={{ flex: 1, backgroundColor }}>
       <FlatList
         data={agreements}
         renderItem={renderAgreementItem}
@@ -178,9 +174,7 @@ export default function Agreements() {
           agreements.length === 0 && Agreementstyles.listContentEmpty,
         ]}
         ListEmptyComponent={!loading ? renderEmptyState : null}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       />
     </View>
   );
