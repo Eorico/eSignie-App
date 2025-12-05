@@ -17,6 +17,7 @@ export interface AuthContextType {
     signUp: (email: string, password: string, name: string) => Promise<{ success: boolean, error?: string }>;
     signOut: () => Promise<void>;
     resetPassword: (email: string) => Promise<{ success: boolean, error?: string }>;
+    updateProfile: (data: { name?: string; email?: string }) => Promise<{ success: boolean; error?: string }>;
 }
 
 // object agreement

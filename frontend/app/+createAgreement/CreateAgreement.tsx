@@ -24,6 +24,7 @@ import { agreementTemplates } from '@/lib/templates';
 import { useNotif } from '@/lib/notification';
 import { useUserStat } from '../+auth/context/userStatContext';
 import * as ImagePicker from 'expo-image-picker';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import i18n from "@/lib/language";
 import { useTranslation } from "react-i18next";
 
@@ -34,6 +35,7 @@ export default function CreateAgreement() {
   const { user } = useAuth();
   const { t } = useTranslation();
   const [languageModal, setLanguageModal] = useState(false);
+  const THEME_KEY = "@theme_mode";
 
   // Force re-render when language changes
   const [, forceUpdate] = React.useState(false);
@@ -41,6 +43,23 @@ export default function CreateAgreement() {
     i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
     setLanguageModal(false);
   };
+
+// THEME STATE
+    const [isChocoMode, setIsChocoMode] = useState(false);
+
+    useEffect(() => {
+        const loadTheme = async () => {
+            const savedTheme = await AsyncStorage.getItem(THEME_KEY);
+            setIsChocoMode(savedTheme === "choco");
+        };
+        loadTheme();
+    }, []);
+
+    const backgroundColor = isChocoMode ? "#8B5E3C" : "#f9cfa3ff";
+    const primaryTextColor = isChocoMode ? "#F5F5F0" : "#000000";
+    const bodyTextColor = isChocoMode ? "#E0E0E0" : "#333333";
+    const controlBorderColor = (invalid = false) => invalid ? 'red' : (isChocoMode ? primaryTextColor : '#632402ff');
+    const placeholderColor = isChocoMode ? 'rgba(245,245,240,0.7)' : '#484b4fbd';
 
   // title inputs
   const [title, setTitle] = useState('');
@@ -425,17 +444,18 @@ export default function CreateAgreement() {
 
   // xml
   return (
-    <View style={CreateAgreementstyles.container}>
+    <View style={[CreateAgreementstyles.container, { backgroundColor }]}>
+
 
       <View style={CreateAgreementstyles.header}>
         <TouchableOpacity
           style={CreateAgreementstyles.backButton}
           onPress={() => router.back()}
         >
-          <ArrowLeft size={24} color="#F5F5F0" />
+          <ArrowLeft size={24} color={primaryTextColor} />
         </TouchableOpacity>
 
-        <Text style={CreateAgreementstyles.headerTitle}>{agreementType} Agreement</Text>
+        <Text style={[CreateAgreementstyles.headerTitle, { color: primaryTextColor }]}>{agreementType} Agreement</Text>
       </View>
         
       <ScrollView 
@@ -448,7 +468,7 @@ export default function CreateAgreement() {
       
 
         <View style={CreateAgreementstyles.content}>
-          <Text style={CreateAgreementstyles.title}>{t('createAgreement.title')}</Text>
+          <Text style={[CreateAgreementstyles.title, { color: primaryTextColor }]}>{t('createAgreement.title')}</Text>
 
           {/* Title */}
           <Animated.View
@@ -469,12 +489,13 @@ export default function CreateAgreement() {
                     borderTopWidth: 0,
                     borderRightWidth: 0,
                     borderLeftWidth: 0,
+                    color: primaryTextColor,
                   }
                 ]}
                 value={title}
                 onChangeText={setTitle}
                 placeholder={t('createAgreement.placeholderTitle')} 
-                placeholderTextColor="#484b4fbd"
+                placeholderTextColor={placeholderColor}
               />
 
             {invalidFields.title && (
@@ -499,7 +520,7 @@ export default function CreateAgreement() {
               }),
             }}
           >
-            <Text style={CreateAgreementstyles.title}>{t('createAgreement.TnC')}</Text>
+            <Text style={[CreateAgreementstyles.title, { color: primaryTextColor }]}>{t('createAgreement.TnC')}</Text>
 
             {/* Toolbar (Formatting Buttons) */}
             <RichToolbar
@@ -546,26 +567,26 @@ export default function CreateAgreement() {
                 showsVerticalScrollIndicator
               >
                 <RichEditor
-                  ref={textEditor}
-                  style={[
-                    CreateAgreementstyles.textArea,
-                    {
-                      borderColor: invalidFields.terms ? 'red' : '#632402ff',
-                      minHeight: 350,
-                      borderRadius: 10,
-                      padding: 10,
-                      backgroundColor: '#fff',
-                      marginBottom: 200,
-                      zIndex: 0
-                    },
-                  ]}
-                  placeholder={t('createAgreement.placeholderTerms')}
-                  initialContentHTML={terms}
-                  onChange={(html) => setTerms(html)}
-                  editorStyle={{
+                   ref={textEditor}
+                   style={[
+                     CreateAgreementstyles.textArea,
+                     {
+                       borderColor: invalidFields.terms ? 'red' : '#632402ff',
+                       minHeight: 350,
+                       borderRadius: 10,
+                       padding: 10,
+                       backgroundColor: '#fff',
+                       marginBottom: 200,
+                       zIndex: 0
+                     },
+                   ]}
+                   placeholder={t('createAgreement.placeholderTerms')}
+                   initialContentHTML={terms}
+                   onChange={(html) => setTerms(html)}
+                   editorStyle={{
                     backgroundColor: '#fff',
                     color: '#000',
-                    placeholderColor: '#484b4fbd',
+                    placeholderColor: isChocoMode ? '#484b4fbd' : '#f0e7de',
                     contentCSSText: `
                       font-size: 16px;
                       line-height: 1.6;
@@ -601,7 +622,7 @@ export default function CreateAgreement() {
                 height: 490,
                 overflow: 'hidden'
           }]}>
-            <Text style={CreateAgreementstyles.title}>{t('createAgreement.PandW')}</Text>
+            <Text style={[CreateAgreementstyles.title, { color: primaryTextColor }]}>{t('createAgreement.PandW')}</Text>
 
             <View style={{ flexDirection: 'row', marginBottom: 10 }}>
 
@@ -612,7 +633,9 @@ export default function CreateAgreement() {
                     padding: 10,
                     flexDirection: 'row',
                     justifyContent: 'center',
-                    backgroundColor: currentType === 'party' ? '#9A3F3F' : '#ffffffff',
+                    backgroundColor: currentType === 'party'
+                      ? (isChocoMode ? '#632402ff' /* cream white in choco */ : '#9A3F3F') 
+                      : '#ffffffff',
                     borderRadius: 30,
                     marginRight: 5,
                     alignItems: 'center',
@@ -621,7 +644,10 @@ export default function CreateAgreement() {
                   }}
                 >
                   <Text style={{ 
-                    color: currentType === 'party' ? '#fff' : '#000', fontWeight: 'bold', 
+                    color: currentType === 'party' 
+                    ? (isChocoMode ? '#fff' /* dark brown on cream */ : '#fff') 
+                      : '#000', 
+                    fontWeight: 'bold', 
                     margin: showWitnessBorder ? 5 : 0
                     }}>
                       {t('createAgreement.party')}
@@ -673,7 +699,7 @@ export default function CreateAgreement() {
                 {(currentType === 'party' ? parties : witnesses).map((party, i) => (
                   <View key={i} style={{ marginBottom: 15 }}>
                     <View style={CreateAgreementstyles.partyHeader}>
-                      <Text style={CreateAgreementstyles.partyLabel}>
+                      <Text style={[CreateAgreementstyles.partyLabel, { color: primaryTextColor }]}>
                         {currentType === 'party' ? `Party ${i + 1}` : `Witness ${i + 1}`}
                       </Text>
                       {(currentType === 'party' ? parties : witnesses).length > 1 && (
@@ -696,7 +722,8 @@ export default function CreateAgreement() {
                           style={[CreateAgreementstyles.input, {
                             borderColor: (currentType === 'party' ? invalidFields.parties[i]?.[field] : invalidFields.witnesses[i]?.[field]) && 
                             (currentType === 'party' ? fadeParties[i] : fadeWitnesses[i]) 
-                            ? 'red' : '#632402ff' 
+                            ? 'red' : controlBorderColor(false),
+                            color: primaryTextColor,
                           },
                         ]}
                           value={
@@ -712,7 +739,7 @@ export default function CreateAgreement() {
                             field === 'role' ? t('createAgreement.role'):
                             t('createAgreement.address')
                           }
-                          placeholderTextColor="#484b4fbd"
+                          placeholderTextColor={placeholderColor}
                           keyboardType={field === 'id_number' ? 'numeric' : 'default'}
                         />
                         
@@ -769,8 +796,8 @@ export default function CreateAgreement() {
                           onChange={(html) => updatePerson(i, 'testimony', html)}
                           editorStyle={{
                             backgroundColor: '#fff',
-                            color: '#000',
-                            placeholderColor: '#484b4fbd',
+                            color: bodyTextColor,
+                            placeholderColor: isChocoMode ? '#f0e7de' : '#484b4fbd',
                             contentCSSText: 'font-size:14px; padding: 8px',
                           }}
                           placeholder='Testimony'
@@ -788,7 +815,7 @@ export default function CreateAgreement() {
                   <View
                     style={{
                       borderWidth: 1,
-                      borderColor: invalidFields.parties[i]?.idType ? 'red' : '#632402ff',
+                      borderColor: invalidFields.parties[i]?.idType ? 'red' : controlBorderColor(false),
                       borderRadius: 8,
                       marginBottom: 8,
                       paddingHorizontal: 10,
@@ -797,6 +824,7 @@ export default function CreateAgreement() {
                     <Picker
                       selectedValue={party.idType}
                       onValueChange={(v) => updatePerson(i, 'idType', v)}
+                      style={{ color: primaryTextColor }}
                     >
                       <Picker.Item label={t('createAgreement.selectID')} value="" />
                       <Picker.Item label="National ID" value="national" />
@@ -807,18 +835,18 @@ export default function CreateAgreement() {
 
                     {party.idType && (
                       <View style={{ marginBottom: 8 }}>
-                        <Text style={{ fontSize: 12, color: '#632402ff', marginBottom: 4 }}>
+                        <Text style={{ fontSize: 12, color: primaryTextColor, marginBottom: 4 }}>
                           {t('createAgreement.selected')}
                         </Text>
                         <Text style={{ 
                           fontSize: 14, 
                           fontWeight: 'bold',
-                          color: '#632402ff',
+                          color: isChocoMode ? primaryTextColor : '#632402ff',
                           padding: 8,
                           backgroundColor: '#f5f5f5',
                           borderRadius: 4,
                           borderWidth: 1,
-                          borderColor: '#632402ff'
+                          borderColor: isChocoMode ? '#e8d8c9' : '#632402ff'
                         }}>
                           {party.idType === 'national' && 'National ID'}
                           {party.idType === 'postal' && 'Postal ID'}
@@ -866,8 +894,8 @@ export default function CreateAgreement() {
                 </View>
 
                 <TouchableOpacity onPress={addPerson} style={CreateAgreementstyles.addButton}>
-                  <Plus size={18} color="#6b7280" />
-                  <Text style={CreateAgreementstyles.addButtonText}>
+                  <Plus size={18} color={isChocoMode ? '#F5F5F0' : '#6b7280'} />
+                  <Text style={[CreateAgreementstyles.addButtonText, { color: isChocoMode ? '#F5F5F0' : '#000' }]}>
                     {currentType === 'party' ? t('createAgreement.addPartyBtn') : t('createAgreement.addWitnessBtn')}
                   </Text>
                 </TouchableOpacity>

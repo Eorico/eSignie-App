@@ -6,6 +6,7 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import SignatureCanvas from 'react-native-signature-canvas';
 import { X } from 'lucide-react-native';
 import { SignatureModalstyles } from '@/styles/SignatureModal_Design';
@@ -39,6 +40,24 @@ export default function SignatureModal({
     i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
     setLanguageModal(false);
   };
+
+  const THEME_KEY = "@theme_mode";
+  const [isChocoMode, setIsChocoMode] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const v = await AsyncStorage.getItem(THEME_KEY);
+        setIsChocoMode(v === 'choco' || v === 'true' || v === 'dark');
+      } catch (e) { /* ignore */ }
+    })();
+  }, []);
+
+  const backgroundColor = isChocoMode ? "#8B5E3C" : "#ffffff";
+  const primaryTextColor = isChocoMode ? "#F5F5F0" : "#111827";
+  const canvasBorderColor = isChocoMode ? "#F5F5F0" : "#632402";
+  const canvasBg = isChocoMode ? "transparent" : "#fafafa";
+  const penColor = isChocoMode ? "#F5F5F0" : "#000000";
 
   useEffect(() => {
     if (visible) {
@@ -89,12 +108,12 @@ export default function SignatureModal({
     onClose();
   };
 
-  const style = `
+  const webStyle = `
     .m-signature-pad {
       box-shadow: none;
-      border: 2px dashed #632402;
+      border: 2px dashed ${canvasBorderColor};
       border-radius: 12px;
-      background-color: #fafafa;
+      background-color: ${canvasBg};
       height: 575px;
       width: 100%;
     }
@@ -141,15 +160,15 @@ export default function SignatureModal({
       transparent={false}
       onRequestClose={handleCloseModal}
     >
-      <View style={SignatureModalstyles.container}>
+      <View style={[SignatureModalstyles.container, { backgroundColor }]}>
         <View style={SignatureModalstyles.header}>
-          <Text style={SignatureModalstyles.title}>{t('signature.title')}</Text>
+          <Text style={[SignatureModalstyles.title, { color: primaryTextColor }]}>{t('signature.title')}</Text>
           <TouchableOpacity onPress={handleCloseModal}>
-            <X size={24} color="#111827" />
+            <X size={24} color={primaryTextColor} />
           </TouchableOpacity>
         </View>
 
-        <Text style={SignatureModalstyles.subtitle}>{t('signature.signFor', { name: partyName })}</Text>
+        <Text style={[SignatureModalstyles.subtitle, { color: primaryTextColor }]}>{t('signature.signFor', { name: partyName })}</Text>
 
         <View style={SignatureModalstyles.canvasContainer}>
           <SignatureCanvas
@@ -161,7 +180,7 @@ export default function SignatureModal({
             descriptionText=""
             clearText="Clear"
             confirmText="Save"
-            webStyle={style}
+            webStyle={webStyle}
             autoClear={false}
             penColor="#000000"
             imageType="image/png"

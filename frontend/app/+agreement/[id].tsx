@@ -15,13 +15,31 @@ import SignatureModal from '@/components/ui/SignatureModal';
 import { generatePDF } from '@/lib/utils/pdfGenerator';
 import { CreatedAgreementstyles } from '@/styles/Created_Agreement_Design';
 import { CreateAgreementstyles } from '@/styles/CreateAgreement_Design';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import i18n from "@/lib/language";
 import { useTranslation } from "react-i18next";
 
 // ito ung agreement details 
 export default function AgreementDetail() {
   const { t } = useTranslation();
+  const THEME_KEY = "@theme_mode";
   const [languageModal, setLanguageModal] = useState(false);
+  const [isChocoMode, setIsChocoMode] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const v = await AsyncStorage.getItem(THEME_KEY);
+        setIsChocoMode(v === "choco" || v === 'true' || v === 'dark');
+      } catch { /* ignore */}
+      })();
+    }, []);
+
+  const backgroundColor = isChocoMode ? "#8B5E3C" : "#f9cfa3ff";
+  const primaryTextColor = isChocoMode ? "#F5F5F0" : "#000000";
+  const bodyTextColor = isChocoMode ? "#E0E0E0" : "#333333";
+  const controlBorderColor = (invalid = false) => invalid ? 'red' : (isChocoMode ? primaryTextColor : '#632402ff');
+
 
   // Force re-render when language changes
   const [, forceUpdate] = React.useState(false);
@@ -59,10 +77,10 @@ export default function AgreementDetail() {
         </TouchableOpacity>
       ),
       headerStyle: {
-        backgroundColor: "#965004ff",
+        backgroundColor: isChocoMode ? "#8B5E3C" : "#965004ff",
       },
       headerTitleStyle: {
-        color: "#EAEAEA",
+        color: isChocoMode ? primaryTextColor : "#EAEAEA",
         fontWeight: "600",
         fontSize: 20,
       },
@@ -209,7 +227,7 @@ export default function AgreementDetail() {
   if (loading) {
     return (
       <View style={CreatedAgreementstyles.centerContainer}>
-        <Text style={CreatedAgreementstyles.loadingText}>Loading...</Text>
+        <Text style={[CreatedAgreementstyles.loadingText, { color: primaryTextColor }]}>Loading...</Text>
       </View>
     );
   }
@@ -217,12 +235,12 @@ export default function AgreementDetail() {
   if (error || !agreementData) {
     return (
       <View style={CreatedAgreementstyles.centerContainer}>
-        <Text style={CreatedAgreementstyles.errorText}>{error || 'Agreement not found'}</Text>
+        <Text style={[CreatedAgreementstyles.errorText, { color: primaryTextColor }]}>{error || 'Agreement not found'}</Text>
         <TouchableOpacity
           style={CreatedAgreementstyles.backButton}
           onPress={() => router.back()}
         >
-          <Text style={CreatedAgreementstyles.backButtonText}>Go Back</Text>
+          <Text style={[CreatedAgreementstyles.backButtonText, { color: primaryTextColor }]}>Go Back</Text>
         </TouchableOpacity>
       </View>
     );
@@ -232,11 +250,11 @@ export default function AgreementDetail() {
   // xml
   return (
     <>
-      <ScrollView style={CreatedAgreementstyles.container}>
+      <ScrollView style={[CreatedAgreementstyles.container, { backgroundColor }]}>
         <View style={CreatedAgreementstyles.content}>
           <View style={CreatedAgreementstyles.header}>
             <View style={CreatedAgreementstyles.headerTop}>
-              <Text style={CreatedAgreementstyles.title}>{agreementData.title}</Text>
+              <Text style={[CreatedAgreementstyles.title, { color: primaryTextColor }]}>{agreementData.title}</Text>
               <View
                 style={[
                   CreatedAgreementstyles.statusBadge,
@@ -247,6 +265,7 @@ export default function AgreementDetail() {
                   style={[
                     CreatedAgreementstyles.statusText,
                     { color: getStatusColor(agreementData.status) },
+                    { color: primaryTextColor },
                   ]}
                 >
                   {agreementData.status.charAt(0).toUpperCase() +
@@ -254,30 +273,30 @@ export default function AgreementDetail() {
                 </Text>
               </View>
             </View>
-            <Text style={CreatedAgreementstyles.date}>
-              Created: {formatDate(agreementData.created_at)}
-            </Text>
+            <Text style={[CreatedAgreementstyles.date, { color: bodyTextColor }]}>
+               Created: {formatDate(agreementData.created_at)}
+             </Text>
           </View>
 
           <TouchableOpacity 
-            style={[CreatedAgreementstyles.exportButton, {borderRadius:25}]} 
+            style={[CreatedAgreementstyles.exportButton, { borderRadius: 25, backgroundColor: isChocoMode ? '#F5F5F0' : '#965004ff' }]} 
             onPress={handleExportPDF}
             >
 
             <Share 
               size={16} 
-              color="#ffffff" 
+              color={isChocoMode ? '#632402ff' : '#ffffff'} 
               />
 
             <Text 
-              style={CreatedAgreementstyles.exportButtonText}>
-                {t('id.export')}
+              style={[CreatedAgreementstyles.exportButtonText, { color: isChocoMode ? '#632402ff' : '#ffffff' }]}>
+               {t('id.export')}
             </Text>
             
           </TouchableOpacity>
 
           <View style={CreatedAgreementstyles.section}>
-            <Text style={CreatedAgreementstyles.sectionTitle}>{t('id.TnC')}</Text>
+            <Text style={[CreatedAgreementstyles.sectionTitle, { color: primaryTextColor }]}>{t('id.TnC')}</Text>
             <View style={CreatedAgreementstyles.termsContainer}>
               <Text style={CreatedAgreementstyles.termsText}>{agreementData.terms}</Text>
             </View>
@@ -285,7 +304,7 @@ export default function AgreementDetail() {
 
           <View style={CreatedAgreementstyles.section}>
 
-            <Text style={CreatedAgreementstyles.sectionTitle}>{t('id.parties')}</Text>
+            <Text style={[CreatedAgreementstyles.sectionTitle, { color: primaryTextColor }]}>{t('id.parties')}</Text>
             {agreementData.parties.map((person) => (
               <View key={person.id} style={CreatedAgreementstyles.partyCard}>
                 <View style={CreatedAgreementstyles.partyHeader}>
@@ -350,7 +369,7 @@ export default function AgreementDetail() {
 
           <View style={CreatedAgreementstyles.section}>
 
-            <Text style={CreatedAgreementstyles.sectionTitle}>{t('id.witness')}</Text>
+            <Text style={[CreatedAgreementstyles.sectionTitle, { color: primaryTextColor }]}>{t('id.witness')}</Text>
             {agreementData.witnesses && agreementData.witnesses.length > 0 ? (
               agreementData.witnesses.map((witness) => (
                 <View key={witness.id} style={CreatedAgreementstyles.partyCard}>

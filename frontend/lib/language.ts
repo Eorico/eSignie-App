@@ -20,6 +20,11 @@ const eng={
         storage_clear_message: "All data has been removed",
         error: "Error occured",
         error_message: "There was a problem while clearing storage",
+        close: "Close",
+        no_login_history: "No Login History Found",
+        clear_login_history_message: "Clear login history?",
+        clear_login_history: "Clear",
+        login_history_cleared: "Login history cleared."
     },
 
     profile: {
@@ -201,6 +206,12 @@ const fil={
         storage_clear_message: "Lahat ng iyong naka-save na data ay nalinis",
         error: "Mayroong error na humadlang",
         error_message: "Nagkaroon ng error habang naglilinis ng iyong storage",
+        close: "isara",
+        no_login_history: "Walang Nahanap na Login History",
+        clear_login_history_message: "I-clear ang talaan ng pag-login?",
+        clear_login_history: "Linisin",
+        login_history_cleared: "Nai-clear na ang talaan ng pag-login."
+
         
     },
   
