@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
 import { Trash2, Edit, Share } from 'lucide-react-native';
-import { agreementStorage, partyStorage, witnessStorage, type AgreementWithPartiesAndWitness } from '@/lib/LocalStorage';
+import { agreementStorage, partyStorage, witnessStorage, type AgreementWithPartiesAndWitness } from '@/lib/LocalStorageWithFirebase';
 import SignatureModal from '@/components/ui/SignatureModal';
 import { generatePDF } from '@/lib/utils/pdfGenerator';
 import { CreatedAgreementstyles } from '@/styles/Created_Agreement_Design';

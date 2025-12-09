@@ -10,8 +10,35 @@ import i18n from "@/lib/language";
 import { useTranslation } from "react-i18next";
 import { useUserStat } from "../+auth/context/userStatContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { get, ref, update } from 'firebase/database';
+import { RealTimeDataBase } from "@/firebase/firebase";
 
 const THEME_KEY = "@theme_mode";
+
+const sanitizeKey = (key: string) => key.replace(/\./g, ",");
+
+export const fetchProfileImageFromDB = async (email: string): Promise<string|null> => {
+  try {
+    const userKey = sanitizeKey(email);
+    const snapShot = await get(ref(RealTimeDataBase, `users/${userKey}/profileImage`));
+    return snapShot.exists() ? snapShot.val() : null;
+  } catch (error) {
+    console.error("Failed to fetch the image from the database:", error);
+    return null;
+  }
+}
+
+export const saveProfileImageToDB = async (email: string, imageUri: string) => {
+  try {
+    const userKey = sanitizeKey(email);
+    await update(ref(RealTimeDataBase, `users/${userKey}`), {
+      profileImage: imageUri
+    });
+    console.log("Profile image saved for user:", email);
+  } catch (error) {
+    console.error("Failed to save profile image:", error);
+  }
+};
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
@@ -42,19 +69,38 @@ export default function ProfileScreen() {
     loadTheme();
   }, []);
 
+  useEffect(() => {
+    const loadProfileImage = async () => {
+      if (user?.email) {
+        const savedImage = await fetchProfileImageFromDB(user.email);
+        if (savedImage) setProfileImage(savedImage);
+      }
+    };
+    loadProfileImage()
+  }, [user]);
+
   const handleImagePick = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
       alert("Permission to access camera roll is required!");
       return;
     }
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
     });
-    if (!result.canceled) setProfileImage(result.assets[0].uri);
+
+    if (!result.canceled && result.assets.length > 0) {
+      const selectedUri = result.assets[0].uri;
+      setProfileImage(selectedUri);
+
+      if (user?.email) {
+        saveProfileImageToDB(user.email, selectedUri)
+      }
+    };
   };
 
   const handleLogout = async () => {
@@ -82,6 +128,7 @@ export default function ProfileScreen() {
   const boxColor = isChocoMode ? "#f9cfa3ff" : "#704328"; // menu & modal boxes
   const boxTextColor = isChocoMode ? "#000000" : "#ffffff"; // menu & modal text
   const iconColor = isChocoMode ? "#000000" : "#f5d9b2ff"; // icons
+  const qrColor = isChocoMode  ? "#f9cfa3ff" : "#ffffff";
 
   return (
     <View style={[Profilestyles.container, { backgroundColor }]}>
@@ -168,14 +215,21 @@ export default function ProfileScreen() {
           {/* Content */}
           <ScrollView contentContainerStyle={{ flex: 1, paddingHorizontal: 20, paddingVertical: 45 }}>
             {modalType === 'qr' && (
-              <View style={{
-                alignItems: 'center', paddingVertical: 20, backgroundColor: boxColor, borderRadius: 20,
-                shadowColor: '#000', shadowOpacity: 1, shadowOffset: { width: 0, height: 3 },
-                shadowRadius: 5, elevation: 5,
-              }}>
-                {user?.email ? <QRCode value={user.email} size={300} backgroundColor={boxColor}/> : <Text>No QR Available</Text>}
+              <View>
+                <View style={{
+                  alignItems: 'center', paddingVertical: 20, backgroundColor: qrColor, borderRadius: 20,
+                  shadowColor: '#000', shadowOpacity: 1, shadowOffset: { width: 0, height: 3 },
+                  shadowRadius: 5, elevation: 5,
+                }}>
+                  {user?.email ? <QRCode value={user.email} size={300} backgroundColor={qrColor}/> : <Text>No QR Available</Text>}
+                </View>
+
+                <View style={{ marginTop: 10, alignItems: "center" }}>
+                  <Text style={{ color: "#fff", fontSize: 15, fontStyle: 'italic' }}>QR CODE: {user?.email}</Text>
+                </View>
               </View>
             )}
+
 
             {modalType === 'support' && (
               <View style={{ padding: 20, backgroundColor: boxColor, borderRadius: 20, shadowColor: '#000', shadowOpacity: 1, shadowOffset: { width: 0, height: 3 }, shadowRadius: 5, elevation: 5 }}>

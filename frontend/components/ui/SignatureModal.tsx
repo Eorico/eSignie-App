@@ -184,7 +184,7 @@ export default function SignatureModal({
             autoClear={false}
             penColor="#000000"
             imageType="image/png"
-            backgroundColor="rgba(255,255,255,0.01)"
+            backgroundColor="rgba(255, 254, 254, 1)"
           />
         </View>
 

@@ -20,7 +20,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SignUpstyles } from '@/styles/signUpStyle';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
-import i18n from '@/lib/language';
 
 export default function SignUpScreen() {
   const [name, setName] = useState('');
@@ -137,15 +136,19 @@ export default function SignUpScreen() {
     }
 
     setLoading(true);
-    const delay = new Promise(res => setTimeout(res, 3000));
-    const resultPromise = signUp(email, password, name);
-    const [result] = await Promise.all([resultPromise, delay]);
+    const MINLOADINGTIME = 2000;
+    const start = Date.now();
+    const result = signUp(email, password, name);
+
+    const elapsed = Date.now() - start;
+    if (elapsed < MINLOADINGTIME) {
+      await new Promise(res => setTimeout(res, MINLOADINGTIME - elapsed))
+    }
+
     setLoading(false);
-
-
     
-    if (!result.success) {
-      setError(result.error || t('register.error_failed_signup'));
+    if (!result) {
+      setError(result || t('register.error_failed_signup'));
     } else {
       await AsyncStorage.setItem('ACCOUNT_CREATED', 'true')
       await AsyncStorage.removeItem('CURRRENT_USER');
@@ -258,7 +261,7 @@ export default function SignUpScreen() {
                   disabled={loading}
                   style={{ paddingHorizontal: 8 }}
                 >
-                  {showPassword ? <AnimatedEye size={20} color={eyeIconColor} /> : <AnimatedEyeOff size={20} color={eyeIconColor} />}
+                  {showPassword ? <AnimatedEyeOff size={20} color={eyeIconColor} /> : <AnimatedEye size={20} color={eyeIconColor} />}
                 </TouchableOpacity>
               </Animated.View>
 
@@ -282,7 +285,7 @@ export default function SignUpScreen() {
                   disabled={loading}
                   style={{ paddingHorizontal: 8 }}
                 >
-                  {showPassword ? <AnimatedEye size={20} color={eyeIconColor} /> : <AnimatedEyeOff size={20} color={eyeIconColor} />}
+                  {showPassword ? <AnimatedEyeOff size={20} color={eyeIconColor} /> : <AnimatedEye size={20} color={eyeIconColor} />}
                 </TouchableOpacity>
               </Animated.View>
 
@@ -353,16 +356,6 @@ export default function SignUpScreen() {
                   </View>
                 </View>
               </Modal>
-
-              {/* LANGUAGE SWITCHER */}
-              <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-                <TouchableOpacity onPress={() => i18n.changeLanguage('en')} style={{ marginHorizontal: 10 }}>
-                  <Text style={{ color: i18n.language === 'en' ? '#1E90FF' : '#666', fontWeight: '600' }}>EN</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => i18n.changeLanguage('fil')} style={{ marginHorizontal: 10 }}>
-                  <Text style={{ color: i18n.language === 'fil' ? '#1E90FF' : '#666', fontWeight: '600' }}>FIL</Text>
-                </TouchableOpacity>
-              </View>
 
             </View>
           </View>

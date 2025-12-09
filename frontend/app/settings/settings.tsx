@@ -15,6 +15,7 @@ import { ArrowLeft, Shield, Trash2, Globe, Bell, History } from "lucide-react-na
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useTranslation } from "react-i18next";
 import i18n from "@/lib/language";
+import { useNotif } from "@/lib/notification";
 
 const THEME_KEY = "@theme_mode";
 const NOTIF_KEY = "@notifications_enabled";
@@ -30,9 +31,9 @@ export default function SettingsScreen() {
   const slideAnim = useRef(new Animated.Value(0)).current; // 0 = Cream, 1 = Choco
 
   // Notification Toggle
-  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
-
-  // Login history modal & data
+  const { notifications, addNotification, clearNotifications } = useNotif();
+  const [ notifSwitch, setNotifSwitch ] = useState(false);
+  // Login history modal & data 
   const [historyModal, setHistoryModal] = useState(false);
   const [loginHistory, setLoginHistory] = useState<any[]>([]);
 
@@ -50,7 +51,11 @@ export default function SettingsScreen() {
         }
 
         const notif = await AsyncStorage.getItem(NOTIF_KEY);
-        setNotificationsEnabled(notif === "true");
+        if (notif === "true") {
+          addNotification("Notification Enabled");
+        } else {
+          clearNotifications();
+        }
       } catch (e) {
         console.log("Error loading settings:", e);
       }
@@ -91,10 +96,16 @@ export default function SettingsScreen() {
   };
 
   const toggleNotifications = async (value?: boolean) => {
-    const newVal = typeof value === "boolean" ? value : !notificationsEnabled;
-    setNotificationsEnabled(newVal);
+    const enable = typeof value === "boolean" ? value : notifications.length > 0;
+    setNotifSwitch(enable);
     try {
-      await AsyncStorage.setItem(NOTIF_KEY, newVal ? "true" : "false");
+      await AsyncStorage.setItem(NOTIF_KEY, enable ? "true" : "false");
+
+      if (!enable) {
+        clearNotifications();
+      } else {
+        addNotification("Notification Enabled")
+      }
     } catch (e) {
       console.log("Error saving notification preference:", e);
     }
@@ -240,10 +251,10 @@ export default function SettingsScreen() {
                   <Icon color={iconColor} size={22} style={{ marginRight: 15 }} />
                   <Text style={[styles.optionText, { color: textColor, flex: 1 }]}>{item.title}</Text>
                   <Switch
-                    value={notificationsEnabled}
+                    value={notifications.length > 0}
                     onValueChange={toggleNotifications}
                     trackColor={{ false: "#767577", true: isChocoMode ? "#4B2E2E" : "#8B5E3C" }}
-                    thumbColor={notificationsEnabled ? "#fff" : "#f4f3f4"}
+                    thumbColor={notifications.length > 0 ? "#fff" : "#f4f3f4"}
                     ios_backgroundColor="#3e3e3e"
                   />
                 </View>

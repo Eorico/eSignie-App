@@ -10,7 +10,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { FileText, ChevronRight } from 'lucide-react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { agreementStorage, type AgreementWithPartiesAndWitness } from '@/lib/LocalStorage';
+import { agreementStorage, type AgreementWithPartiesAndWitness } from '@/lib/LocalStorageWithFirebase';
 import { Agreementstyles } from '@/styles/Agreement_Design';
 import { useAuth } from '../+auth/context/authContext';
 import i18n from "@/lib/language";

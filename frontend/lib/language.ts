@@ -329,7 +329,7 @@ const fil={
     greetings: [
       "Kamusta!",
       "Buti nagbalik ka!",
-      "Maligayang Pagbabalik!",
+      "Maligayang\n Pagbabalik!",
       "Magandang Araw!",
       "Ayun! Bumalik Ka!"
     ],
@@ -340,7 +340,7 @@ const fil={
     password_placeholder: "Password",
 
     remember_me: "Tandaan Ako",
-    forgot_password: "Nakalimutan ang Password?",
+    forgot_password: "Nakalimutan?",
 
     login_button: "Mag Log In",
     login_loading: "Nagla-log in...",

@@ -18,7 +18,6 @@ export default function TabLayout() {
   const [languageModal, setLanguageModal] = useState(false);
   const handleBellPress = (event: GestureResponderEvent) => {
     setModalVisible(true);
-    clearNotifications();
   };
 
   // Force re-render when language changes
@@ -109,7 +108,7 @@ export default function TabLayout() {
                   <View style={NotifStyle.headerRow}>
 
                     <Text style={NotifStyle.modalTitle}>{t('layout.notif1')}</Text>
-                    <Pressable onPress={() => setModalVisible(false)}>
+                    <Pressable onPress={() => [setModalVisible(false), clearNotifications()]}>
                       <Text style={NotifStyle.closeX}><XCircle size={24}/></Text>
                     </Pressable>
 

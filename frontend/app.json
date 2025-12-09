@@ -8,19 +8,33 @@
     "scheme": "eagreement",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "ios": { "supportsTablet": true },
-    "android": {},
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.eoricodev12.ESIGNIE"
+    },
     "web": {
       "output": "static",
       "favicon": "./assets/images/capybaraIcon.png"
     },
-    "plugins": ["expo-router"],
-    "experiments": { "typedRoutes": true, "reactCompiler": true },
-
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    },
     "splash": {
-      "backgroundColor": "#8B4513", 
+      "backgroundColor": "#8B4513",
       "resizeMode": "contain",
       "image": "./assets/images/capybaraIcon.png"
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "278cd815-6778-4c0b-b37f-5a7ae89adf26"
+      }
     }
   }
 }

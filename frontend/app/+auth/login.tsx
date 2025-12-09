@@ -194,7 +194,7 @@ export default function LoginScreen() {
                   editable={!loading}
                 />
                 <TouchableOpacity onPress={()=>setShowPassword(!showPassword)} disabled={loading} style={{paddingHorizontal: 8}}>
-                  {showPassword ? <AnimatedEye size={20} color={eyeIconColor} /> : <AnimatedEyeOff size={20} color={eyeIconColor} />}
+                  {showPassword ? <AnimatedEyeOff size={20} color={eyeIconColor} /> : <AnimatedEye size={20} color={eyeIconColor} />}
                 </TouchableOpacity>
               </Animated.View>
 

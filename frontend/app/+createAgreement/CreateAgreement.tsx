@@ -11,7 +11,7 @@ import {
   Image
 } from 'react-native';
 import { Plus, Trash2, AlertCircle, ArrowLeft } from 'lucide-react-native';
-import { agreementStorage, partyStorage, witnessStorage } from '@/lib/LocalStorage';
+import { agreementStorage, partyStorage, witnessStorage } from '@/lib/LocalStorageWithFirebase';
 import { useRouter } from 'expo-router';
 import { CreateAgreementstyles } from '@/styles/CreateAgreement_Design';
 import { useAuth } from '../+auth/context/authContext';
@@ -418,7 +418,7 @@ export default function CreateAgreement() {
         role: witness.role.trim(),
         id_number: witness.id_number.toString(),
         address: witness.address.trim(),
-        testimony: witness.testimony?.trim(),
+        testimony: witness.testimony?.trim() || '',
         idType: witness.idType.trim(),
         id_photo_uri: witness.id_photo_uri,
       }));
