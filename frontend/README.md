@@ -1,4 +1,4 @@
-# Welcome to your Expo app 👋
+# Welcome to your E-Signie App 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
@@ -56,3 +56,26 @@ Join our community of developers creating universal apps.
 Developers:
 Eorico Aron Ej M. Gonzales
 Bea Nicole R. Repomanta
+
+FEATURES: 
+
+-LOGIN
+-SIGNUP
+-RESET PASSWORD
+-SETTINGS
+ -change password, change email, change name
+ -choco mode
+ -notifcation permission
+ -language
+ -clear storage
+ -login history
+-PROFILE
+ -add profile image
+ -logoout
+-ADD AGREEMENTS
+ -choose agreement type with templates
+ -with parties and witnesses
+-CREATED AGREEMENT
+ -you can view and download to pdf the agreements
+-NOTIFICATION
+
