@@ -8,6 +8,8 @@ import SplashScreen from "./+splashScreen/SplashScreen";
 import { Animated } from "react-native";
 import { NotifProvider } from '@/lib/notification';
 import { UserStatProvider } from './+auth/context/userStatContext';
+import NoInternet from '@/components/ui/NoInternetDetector';
+import NetInfo from '@react-native-community/netinfo';
 
 // Root layout for router connections: ito ung nagcoconnect sa mga pages
 const RootLayoutNav = () => {
@@ -17,6 +19,16 @@ const RootLayoutNav = () => {
   const [showSplash, setShowSplash] = useState(true);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const [ isConnected, setIsConnected ] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      setIsConnected(Boolean(state.isConnected && state.isInternetReachable));
+    });
+    
+    return unsubscribe;
+  }, []);
 
   // Show splash for 3.5 seconds
   useEffect(() => {
@@ -53,6 +65,14 @@ const RootLayoutNav = () => {
     }).start()
 
   }, [user, loading, segments, router, showSplash]);
+
+  if (isConnected === null) {
+    return <SplashScreen />
+  }
+
+  if (!isConnected) {
+    return <NoInternet />
+  }
 
   // Show splash screen first
   if (showSplash || loading) {
