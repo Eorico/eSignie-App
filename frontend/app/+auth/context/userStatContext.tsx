@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { User } from "@/lib/interFace";
+import { RealTimeDataBase } from "@/firebase/firebase";
+import { ref, update } from 'firebase/database';
+
+const sanitizeKey = (key: string) => key.replace(/\./g, ",");
 
 type UserStatContextType = {
   userStat: User ;
@@ -19,8 +23,23 @@ export const UserStatProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const incrementStat = (stat: keyof User, amount = 1) => {
-    if (!userStat) return;
-    setUserStat({ ...userStat, [stat]: Number(userStat[stat] || 0) + amount });
+    setUserStat(prev => {
+      const updated = {
+        ...prev,
+        [stat]: Number(prev[stat] || 0) + amount
+      };
+
+      if (prev.email) {
+        const userKey = sanitizeKey(prev.email);
+        update(ref(RealTimeDataBase, `users/${userKey}/stats`), {
+          draftsAgreement: updated.draftsAgreement,
+          completedAgreement: updated.completedAgreement,
+          createdAgreement: updated.createdAgreement,
+        });
+      }
+
+      return updated;
+    });
   };
 
   return (

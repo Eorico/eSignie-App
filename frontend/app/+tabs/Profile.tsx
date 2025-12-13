@@ -28,6 +28,21 @@ export const fetchProfileImageFromDB = async (email: string): Promise<string|nul
   }
 }
 
+export const fetchUserStatFromDB = async (email: string) => {
+  try {
+    const userKey = sanitizeKey(email);
+    const snapshot = await get(ref(RealTimeDataBase, `users/${userKey}/stats`));
+    return snapshot.exists() ? snapshot.val() : {
+      draftsAgreement: 0,
+      completedAgreement: 0,
+      createdAgreement: 0,
+    };
+  } catch (error) {
+    console.error("Failed to fetch user stats:", error);
+    return null;
+  }
+}
+
 export const saveProfileImageToDB = async (email: string, imageUri: string) => {
   try {
     const userKey = sanitizeKey(email);
@@ -48,13 +63,29 @@ export default function ProfileScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalType, setModalType] = useState<'qr'| 'support' | 'about' | null>(null);
   const [isChocoMode, setIsChocoMode] = useState(false); // theme state
-  const { userStat } = useUserStat();
+  const { userStat, setUserStat } = useUserStat();
 
   // Force re-render when language changes
   const [, forceUpdate] = useState(false);
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang).then(() => forceUpdate(prev => !prev));
   };
+
+  useEffect(() => {
+    const loadUserStats = async () => {
+      if (!user?.email) return;
+      
+      const stats = await fetchUserStatFromDB(user.email);
+
+      setUserStat(prev => ({
+        ...prev, ...stats,
+        name: user.name ?? '',
+        email: user.email,
+      }));
+    };
+
+    loadUserStats()
+  }, [user?.email]);
 
   // Load theme from AsyncStorage
   useEffect(() => {
